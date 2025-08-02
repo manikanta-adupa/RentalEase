@@ -1,0 +1,93 @@
+<h2>Rent Payment Reminder 🏠💳</h2>
+
+<p>Hello {{tenantName}},</p>
+
+<p>This is a friendly reminder that your rent payment is due soon. We want to help you stay on track with your rental obligations.</p>
+
+<div class="property-card">
+    <h4>📍 Your Rental Property</h4>
+    <p><strong>{{property.address}}</strong></p>
+    <p>{{property.city}}, {{property.state}}</p>
+    
+    <div class="divider"></div>
+    
+    <div class="property-details">
+        <div><strong>Monthly Rent:</strong> ₹{{property.monthlyRent}}</div>
+        <div><strong>Due Date:</strong> {{dueDate}}</div>
+        <div><strong>Payment Status:</strong> {{paymentStatus}}</div>
+        <div><strong>Days Until Due:</strong> {{daysUntilDue}}</div>
+    </div>
+</div>
+
+{{#if (eq daysUntilDue 0)}}
+<div class="status-rejected">
+    <h3>⚠️ Payment Due Today</h3>
+    <p>Your rent payment is due today. Please make your payment as soon as possible to avoid late fees.</p>
+</div>
+{{else if (lt daysUntilDue 0)}}
+<div class="status-rejected">
+    <h3>🚨 Payment Overdue</h3>
+    <p>Your rent payment is {{math (multiply daysUntilDue -1)}} day(s) overdue. Please contact your property owner immediately.</p>
+</div>
+{{else}}
+<div class="status-pending">
+    <h3>📅 Upcoming Payment</h3>
+    <p>Your rent payment is due in {{daysUntilDue}} day(s). Please prepare your payment to avoid any late fees.</p>
+</div>
+{{/if}}
+
+<h3>Payment Options:</h3>
+<div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 15px 0;">
+    <ul style="margin: 0;">
+        <li><strong>Online Payment:</strong> Use our secure payment portal</li>
+        <li><strong>UPI Transfer:</strong> Quick and instant payments</li>
+        <li><strong>Bank Transfer:</strong> Direct bank-to-bank transfer</li>
+        <li><strong>Card Payment:</strong> Credit or debit card payments</li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="#" class="button-primary">Make Payment Now</a>
+    <a href="#" class="button-secondary">View Payment History</a>
+</div>
+
+{{#if lateFeePolicy}}
+<h3>⚡ Late Fee Policy:</h3>
+<div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+    <p>{{lateFeePolicy}}</p>
+</div>
+{{/if}}
+
+<h3>Property Owner Contact:</h3>
+<div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 15px 0;">
+    <p><strong>Name:</strong> {{ownerName}}</p>
+    <p><strong>Email:</strong> {{ownerEmail}}</p>
+    <p><strong>Phone:</strong> {{ownerPhone}}</p>
+</div>
+
+<div class="divider"></div>
+
+<h3>Having Payment Issues?</h3>
+<p>If you're experiencing financial difficulties or have questions about your payment:</p>
+
+<ul>
+    <li>Contact your property owner immediately to discuss options</li>
+    <li>Our support team can provide guidance on payment plans</li>
+    <li>Don't wait until the last minute - early communication is key</li>
+    <li>Keep records of all payment communications</li>
+</ul>
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="mailto:{{ownerEmail}}" class="button-secondary">Contact Property Owner</a>
+    <a href="#" class="button-secondary">Contact Support</a>
+</div>
+
+<p>Thank you for being a responsible tenant. We appreciate your prompt attention to this matter.</p>
+
+<p>Best regards,<br>
+<strong>The RentalEase Team</strong></p>
+
+<p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
+    <strong>This is an automated reminder.</strong> If you have already made your payment, 
+    please disregard this email. It may take 24-48 hours for payments to reflect in our system.
+</p>

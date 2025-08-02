@@ -1,0 +1,74 @@
+<h2>Application Status Update</h2>
+
+<p>Hello {{name}},</p>
+
+<p>We have an update regarding your rental application for <strong>{{property}}</strong>.</p>
+
+{{#if (eq status "approved")}}
+<div class="status-approved">
+    <h3>🎉 Congratulations! Your Application Has Been Approved</h3>
+    <p>The property owner has approved your rental application. This is an exciting step forward!</p>
+</div>
+
+<h3>What's Next?</h3>
+<ul>
+    <li>The property owner will contact you within 24 hours to discuss next steps</li>
+    <li>Prepare your security deposit and first month's rent</li>
+    <li>Review the lease agreement carefully</li>
+    <li>Schedule a move-in inspection</li>
+</ul>
+
+<p><strong>Important:</strong> Please respond to the property owner promptly to secure your rental.</p>
+
+{{else if (eq status "rejected")}}
+<div class="status-rejected">
+    <h3>Application Update</h3>
+    <p>Unfortunately, your application was not selected for this property. We understand this is disappointing.</p>
+</div>
+
+<h3>Don't Give Up!</h3>
+<ul>
+    <li>Many great properties are available on our platform</li>
+    <li>Your profile is complete and ready for new applications</li>
+    <li>Consider expanding your search criteria</li>
+    <li>Our support team can help you find suitable alternatives</li>
+</ul>
+
+<a href="#" class="button-primary">Browse More Properties</a>
+
+{{else if (eq status "pending")}}
+<div class="status-pending">
+    <h3>Application Under Review</h3>
+    <p>Your application is currently being reviewed by the property owner.</p>
+</div>
+
+<h3>While You Wait:</h3>
+<ul>
+    <li>Ensure all your documents are uploaded and current</li>
+    <li>The property owner may contact you for additional information</li>
+    <li>You'll receive another update once a decision is made</li>
+    <li>Feel free to continue browsing other properties</li>
+</ul>
+
+{{/if}}
+
+{{#if ownerMessage}}
+<div class="divider"></div>
+<h3>Message from Property Owner:</h3>
+<div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #2563eb; margin: 15px 0;">
+    <p><em>"{{ownerMessage}}"</em></p>
+</div>
+{{/if}}
+
+<div class="divider"></div>
+
+<h3>Need Help?</h3>
+<p>If you have any questions about your application or need assistance:</p>
+
+<a href="#" class="button-secondary">Contact Support</a>
+<a href="#" class="button-secondary">View Application</a>
+
+<p>Thank you for choosing RentalEase for your rental needs.</p>
+
+<p>Best regards,<br>
+<strong>The RentalEase Team</strong></p>

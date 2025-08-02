@@ -1,0 +1,44 @@
+{
+  "name": "rentalease",
+  "version": "1.0.0",
+  "description": "RentalEase - Smart Rental Management Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:start\"",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "frontend:start": "cd frontend && npm start",
+    "frontend:android": "cd frontend && npx react-native run-android",
+    "frontend:ios": "cd frontend && npx react-native run-ios",
+    "test": "npm run backend:test && npm run frontend:test",
+    "backend:test": "cd backend && npm test",
+    "frontend:test": "cd frontend && npm test",
+    "clean": "npm run clean:backend && npm run clean:frontend",
+    "clean:backend": "cd backend && rm -rf node_modules package-lock.json",
+    "clean:frontend": "cd frontend && rm -rf node_modules package-lock.json",
+    "deploy:backend": "cd backend && npm run deploy",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "rental",
+    "property-management",
+    "react-native",
+    "nodejs",
+    "mongodb",
+    "mobile-app"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+} 

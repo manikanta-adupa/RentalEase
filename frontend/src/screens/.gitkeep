@@ -1,0 +1,10 @@
+# Screens Directory
+
+React Native screens for the RentalEase mobile app.
+
+## Structure:
+- `AuthScreens/` - Login, Register, ForgotPassword
+- `PropertyScreens/` - PropertyList, PropertyDetail, AddProperty
+- `ProfileScreens/` - UserProfile, EditProfile
+- `PaymentScreens/` - PaymentHistory, MakePayment
+- `DashboardScreens/` - OwnerDashboard, TenantDashboard 

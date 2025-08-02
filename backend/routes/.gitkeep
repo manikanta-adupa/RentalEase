@@ -1,0 +1,10 @@
+# Routes Directory
+
+API endpoint definitions for the RentalEase backend.
+
+## Structure:
+- `auth.js` - Authentication routes (/api/auth)
+- `properties.js` - Property management (/api/properties)
+- `users.js` - User management (/api/users)
+- `payments.js` - Payment processing (/api/payments)
+- `notifications.js` - Notification system (/api/notifications) 
