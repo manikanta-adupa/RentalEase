@@ -1,0 +1,10 @@
+# Components Directory
+
+Reusable UI components for the RentalEase mobile app.
+
+## Structure:
+- `common/` - Button, Input, Loading, etc.
+- `forms/` - PropertyForm, ProfileForm, etc.
+- `cards/` - PropertyCard, UserCard, etc.
+- `lists/` - PropertyList, TenantList, etc.
+- `navigation/` - CustomHeader, TabBar, etc. 

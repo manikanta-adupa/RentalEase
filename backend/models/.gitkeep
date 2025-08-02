@@ -1,0 +1,10 @@
+# Models Directory
+
+This directory contains all MongoDB schema definitions using Mongoose.
+
+## Structure:
+- `User.js` - User model (Owner/Tenant)
+- `Property.js` - Property listings model
+- `RentRecord.js` - Rent payment records
+- `Notification.js` - Notification system
+- `Payment.js` - Payment transactions 

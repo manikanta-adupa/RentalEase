@@ -1,0 +1,10 @@
+# Controllers Directory
+
+This directory will contain all route handler functions for the RentalEase backend API.
+
+## Structure:
+- `authController.js` - Authentication and user management
+- `propertyController.js` - Property CRUD operations
+- `tenantController.js` - Tenant management
+- `paymentController.js` - Payment processing
+- `notificationController.js` - Notification handling 
