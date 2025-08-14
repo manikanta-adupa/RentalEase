@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -55,6 +56,20 @@ const userSchema = new mongoose.Schema({
         required: true,
         // Note: Password validation happens in middleware, not here due to hashing
     },
+    passwordResetToken: {
+        type: String,
+        default: null,
+    },
+    passwordResetExpires: {
+        type: Date,
+    },
+    emailVerificationToken: {
+        type: String,
+        default: null,
+    },
+    emailVerificationExpires: {
+        type: Date,
+    },
 }, {timestamps: true});
 
 // Add database indexes for performance
@@ -79,5 +94,22 @@ userSchema.pre("save", async function(next) {
 userSchema.methods.comparePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
+
+//generate password reset token
+userSchema.methods.generatePasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetExpires = Date.now() + 3600000; //1 hour
+    return resetToken;
+};
+
+//generate email verification token
+///hash with sha256
+userSchema.methods.generateEmailVerificationToken = function() {
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    this.emailVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
+    this.emailVerificationExpires = Date.now() + 3600000; //1 hour
+    return this.emailVerificationToken;
+};  
 
 module.exports = mongoose.model("User", userSchema);

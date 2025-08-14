@@ -75,8 +75,22 @@ app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/applications", applicationRoutes);
 
+// API root index for easy discovery
+app.get('/api', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'RentalEase API root',
+        routes: [
+            '/api/auth',
+            '/api/properties',
+            '/api/applications',
+        ],
+        timestamp: new Date().toISOString(),
+    });
+});
+
 // Health check route
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
     res.json({
         success: true,
         message: "RentalEase API is running",
@@ -122,14 +136,6 @@ app.use((err, req, res, next) => {
         message: process.env.NODE_ENV === 'production' 
             ? 'Something went wrong' 
             : err.message
-    });
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'Route not found'
     });
 });
 
@@ -208,7 +214,7 @@ cron.schedule('0 2 * * *', async () => {
     timezone: "Asia/Kolkata" // Adjust for Indian timezone
 });
 
-// Health check endpoint with comprehensive status
+// Health check endpoint with comprehensive status (keep generic root for health)
 app.get('/', (req, res) => {
     const uptime = process.uptime();
     const memoryUsage = process.memoryUsage();
@@ -224,6 +230,14 @@ app.get('/', (req, res) => {
             total: `${Math.round(memoryUsage.heapTotal / 1024 / 1024)} MB`
         },
         database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    });
+});
+
+// 404 handler for API namespace only (do not catch root/health)
+app.use('/api/*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'API route not found'
     });
 });
 

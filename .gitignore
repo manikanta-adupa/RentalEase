@@ -123,6 +123,13 @@ GIT_SETUP_COMMANDS.md
 *.postman_collection.json
 docs/
 
+# Interview preparation and study materials (private)
+INTERVIEW_PREP.md
+study_notes/
+interview_questions.md
+*.interview
+*.study
+
 # Keep important config files
 !.gitkeep
 !package.json
