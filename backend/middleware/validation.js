@@ -28,8 +28,7 @@ const validateObjectId = (paramName = 'id') => [
 const validateRegistration = [
     body('email')
         .isEmail()
-        .withMessage('Please provide a valid email address')
-        .normalizeEmail(),
+        .withMessage('Please provide a valid email address'),
         
     body('password')
         .isLength({ min: 8, max: 128 })
@@ -76,8 +75,7 @@ const validateRegistration = [
 const validateLogin = [
     body('email')
         .isEmail()
-        .withMessage('Please provide a valid email address')
-        .normalizeEmail(),
+        .withMessage('Please provide a valid email address'),
         
     body('password')
         .notEmpty()

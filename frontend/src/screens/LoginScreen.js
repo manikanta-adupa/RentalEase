@@ -22,9 +22,19 @@ export default function LoginScreen() {
     const isLoading = status === 'loading';
 
     const handleLogin = async () => {
+        console.log('=== LOGIN DEBUG START ===');
+        console.log('Email:', email);
+        console.log('Password length:', password.length);
+        console.log('API URL:', client.defaults?.baseURL || 'No baseURL set');
+        
         dispatch(loginStart());
         try {
+            console.log('Making API call to /auth/login...');
             const res = await client.post('/auth/login', { email, password });
+            console.log('=== API RESPONSE SUCCESS ===');
+            console.log('Response status:', res.status);
+            console.log('Response data:', res.data);
+            
             const { token, user } = res.data;
             await AsyncStorage.multiSet([
                 ['@token', token],
@@ -33,10 +43,26 @@ export default function LoginScreen() {
             setAuthToken(token);
             dispatch(loginSuccess({ user, token }));
             navigation.navigate('Home');
+            console.log('=== LOGIN SUCCESS COMPLETE ===');
         } catch (error) {
+            console.log('=== LOGIN ERROR ===');
+            console.log('Error object:', error);
+            console.log('Error message:', error.message);
+            if (error.response) {
+                console.log('Error response status:', error.response.status);
+                console.log('Error response data:', error.response.data);
+            } else if (error.request) {
+                console.log('Error request:', error.request);
+                console.log('No response received');
+            } else {
+                console.log('Error setting up request:', error.message);
+            }
+            
             const message = error?.response?.data?.message || "Login failed";
+            console.log('Final error message:', message);
             dispatch(loginFailure(message));
             Alert.alert('Login failed', message);
+            console.log('=== LOGIN ERROR HANDLED ===');
         }
     }
 
