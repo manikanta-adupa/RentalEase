@@ -31,6 +31,14 @@ export default function ForgotPasswordScreen() {
             
             if(response.data.success){
                 setSuccess(response.data.message || 'Reset email sent successfully!');
+                
+                // Auto-navigate to Reset Password screen after a brief delay
+                setTimeout(() => {
+                    navigation.navigate('ResetPassword', { 
+                        email: email,
+                        fromForgotPassword: true 
+                    });
+                }, 1500); // 1.5 second delay to show success message
             }
             else{
                 setError(response.data.message);
