@@ -14,14 +14,22 @@ export default function ResetPasswordScreen() {
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
     const [tokenFocused, setTokenFocused] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+    const [fromForgotPassword, setFromForgotPassword] = useState(false);
 
     const navigation = useNavigation();
     const route = useRoute();
 
-    // Extract token from deep link or route params
+    // Extract parameters from route
     useEffect(() => {
         if (route.params?.token) {
             setToken(route.params.token);
+        }
+        if (route.params?.email) {
+            setUserEmail(route.params.email);
+        }
+        if (route.params?.fromForgotPassword) {
+            setFromForgotPassword(true);
         }
     }, [route.params]);
 
@@ -107,6 +115,18 @@ export default function ResetPasswordScreen() {
                         <Text style={[typography.h1, { color: colors.primary, marginBottom: spacing.lg }]}>
                             Reset Password
                         </Text>
+                        
+                        {fromForgotPassword && userEmail ? (
+                            <View style={{ backgroundColor: colors.success.light, padding: spacing.md, borderRadius: 8, marginBottom: spacing.lg }}>
+                                <Text style={[typography.body, { color: colors.success.dark, textAlign: 'center' }]}>
+                                    📧 Reset instructions sent to{'\n'}
+                                    <Text style={{ fontWeight: 'bold' }}>{userEmail}</Text>
+                                </Text>
+                                <Text style={[typography.caption, { color: colors.success.dark, textAlign: 'center', marginTop: spacing.xs }]}>
+                                    Check your email for the reset token
+                                </Text>
+                            </View>
+                        ) : null}
                         
                         <Text style={[typography.body, { color: colors.textSecondary, marginBottom: spacing.xl }]}>
                             Enter your reset token and choose a new password
