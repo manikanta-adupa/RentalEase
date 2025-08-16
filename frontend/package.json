@@ -16,7 +16,6 @@
     "@tanstack/react-query": "^5.85.0",
     "axios": "^1.11.0",
     "expo": "~53.0.20",
-    "expo-linking": "~7.1.7",
     "expo-status-bar": "~2.2.3",
     "react": "^18.2.0",
     "react-native": "0.79.5",
