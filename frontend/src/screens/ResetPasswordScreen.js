@@ -1,6 +1,6 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, BackHandler } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { client } from '../api/client';
 import { colors, typography, spacing, layout } from '../styles';
 
@@ -32,6 +32,34 @@ export default function ResetPasswordScreen() {
             setFromForgotPassword(true);
         }
     }, [route.params]);
+
+    // Handle back button press with warning
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                Alert.alert(
+                    "⚠️ Wait!",
+                    "Going back will lose your progress. Make sure you've copied the reset token from your email before leaving.\n\nAre you sure you want to go back?",
+                    [
+                        {
+                            text: "Stay Here",
+                            onPress: () => null,
+                            style: "cancel"
+                        },
+                        {
+                            text: "Go Back",
+                            onPress: () => navigation.goBack(),
+                            style: "destructive"
+                        }
+                    ]
+                );
+                return true; // Prevent default behavior
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            return () => subscription.remove();
+        }, [navigation])
+    );
 
     const validateInputs = () => {
         if (!token.trim()) {
@@ -102,7 +130,7 @@ export default function ResetPasswordScreen() {
 
     return (
         <SafeAreaView style={layout.container}>
-            <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+            <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
             <KeyboardAvoidingView 
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={layout.flex}
@@ -127,6 +155,34 @@ export default function ResetPasswordScreen() {
                                 </Text>
                             </View>
                         ) : null}
+
+                        {/* Important Instructions Banner */}
+                        <View style={{ 
+                            backgroundColor: colors.warning.light, 
+                            borderWidth: 1,
+                            borderColor: colors.warning.main,
+                            padding: spacing.md, 
+                            borderRadius: 12, 
+                            marginBottom: spacing.lg 
+                        }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs }}>
+                                <Text style={{ fontSize: 20, marginRight: spacing.xs }}>⚠️</Text>
+                                <Text style={[typography.caption, { 
+                                    color: colors.warning.dark, 
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: 0.5
+                                }]}>
+                                    Important Instructions
+                                </Text>
+                            </View>
+                            <Text style={[typography.caption, { color: colors.warning.dark, lineHeight: 18 }]}>
+                                • Copy the reset token from your email{'\n'}
+                                • Paste it in the field below{'\n'}
+                                • <Text style={{ fontWeight: 'bold' }}>Don't close this screen</Text> until you complete the reset{'\n'}
+                                • <Text style={{ fontWeight: 'bold' }}>Don't go back</Text> - you'll lose your progress
+                            </Text>
+                        </View>
                         
                         <Text style={[typography.body, { color: colors.textSecondary, marginBottom: spacing.xl }]}>
                             Enter your reset token and choose a new password
