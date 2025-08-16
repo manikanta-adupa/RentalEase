@@ -1,32 +1,60 @@
-<h2>Application Status Update</h2>
-
-<p>Hello {{name}},</p>
-
-<p>We have an update regarding your rental application for <strong>{{property}}</strong>.</p>
-
+<!-- Application Status Email - Dynamic Results Design -->
 {{#if (eq status "approved")}}
-<div class="status-approved">
-    <h3>🎉 Congratulations! Your Application Has Been Approved</h3>
-    <p>The property owner has approved your rental application. This is an exciting step forward!</p>
+<div style="text-align: center; margin-bottom: 30px;">
+    <div style="display: inline-block; background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); padding: 25px 35px; border-radius: 50px; margin-bottom: 20px; border: 3px solid #3b82f6;">
+        <span style="font-size: 56px;">🎉</span>
+    </div>
+    <h2 style="color: #1e40af; font-size: 32px; margin: 0; font-weight: 800;">APPROVED!</h2>
+    <p style="color: #1e3a8a; font-size: 18px; margin: 10px 0 0 0; font-weight: 600;">Congratulations {{name}}!</p>
 </div>
 
-<h3>What's Next?</h3>
-<ul>
-    <li>The property owner will contact you within 24 hours to discuss next steps</li>
-    <li>Prepare your security deposit and first month's rent</li>
-    <li>Review the lease agreement carefully</li>
-    <li>Schedule a move-in inspection</li>
-</ul>
+<div style="background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); padding: 30px; border-radius: 20px; margin: 25px 0; border: 2px solid #3b82f6; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -10px; right: -10px; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; transform: rotate(15deg);">APPROVED ✓</div>
+    <h3 style="color: #1e40af; font-size: 22px; margin: 0 0 15px 0; display: flex; align-items: center;">
+        <span style="background: #10b981; color: white; width: 35px; height: 35px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 18px;">🏠</span>
+        Your application for {{property}} has been approved!
+    </h3>
+    <p style="font-size: 16px; color: #1e3a8a; margin: 0; font-weight: 500;">The property owner loved your application and wants you as their tenant!</p>
+</div>
 
-<p><strong>Important:</strong> Please respond to the property owner promptly to secure your rental.</p>
+<div style="background: white; border: 2px solid #10b981; border-radius: 16px; padding: 25px; margin: 25px 0;">
+    <h3 style="color: #065f46; font-size: 20px; margin: 0 0 20px 0; display: flex; align-items: center;">
+        <span style="background: #10b981; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 16px;">📋</span>
+        Next Steps to Move In
+    </h3>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 8px;">
+            <span style="color: #065f46; font-weight: 600;">Step 1:</span> <span style="color: #374151;">Owner will contact you within 24 hours</span>
+        </div>
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 8px;">
+            <span style="color: #065f46; font-weight: 600;">Step 2:</span> <span style="color: #374151;">Prepare security deposit and first month's rent</span>
+        </div>
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 8px;">
+            <span style="color: #065f46; font-weight: 600;">Step 3:</span> <span style="color: #374151;">Review and sign lease agreement</span>
+        </div>
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 8px;">
+            <span style="color: #065f46; font-weight: 600;">Step 4:</span> <span style="color: #374151;">Schedule move-in inspection</span>
+        </div>
+    </div>
+</div>
 
 {{else if (eq status "rejected")}}
-<div class="status-rejected">
-    <h3>Application Update</h3>
-    <p>Unfortunately, your application was not selected for this property. We understand this is disappointing.</p>
+<div style="text-align: center; margin-bottom: 30px;">
+    <div style="display: inline-block; background: linear-gradient(135deg, #fef7ed 0%, #fed7aa 100%); padding: 25px 35px; border-radius: 50px; margin-bottom: 20px; border: 3px solid #f97316;">
+        <span style="font-size: 56px;">💪</span>
+    </div>
+    <h2 style="color: #ea580c; font-size: 28px; margin: 0; font-weight: 700;">Keep Going Strong!</h2>
+    <p style="color: #c2410c; font-size: 18px; margin: 10px 0 0 0; font-weight: 600;">Hi {{name}}, don't give up!</p>
 </div>
 
-<h3>Don't Give Up!</h3>
+<div style="background: linear-gradient(135deg, #fef7ed 0%, #fed7aa 100%); padding: 25px; border-radius: 16px; margin: 25px 0; border-left: 4px solid #f97316;">
+    <p style="font-size: 16px; color: #c2410c; margin: 0; font-weight: 500;">📝 Your application for {{property}} wasn't selected this time, but that doesn't define your rental journey!</p>
+</div>
+
+<div style="background: white; border: 2px solid #f97316; border-radius: 16px; padding: 25px; margin: 25px 0;">
+    <h3 style="color: #ea580c; font-size: 20px; margin: 0 0 20px 0; display: flex; align-items: center;">
+        <span style="background: #f97316; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 16px;">🚀</span>
+        Your Next Move</h3>
 <ul>
     <li>Many great properties are available on our platform</li>
     <li>Your profile is complete and ready for new applications</li>
