@@ -163,8 +163,8 @@ exports.resetPassword = async (req, res) => {
 
         // Update password
         user.password = password; // Will be hashed by the pre-save middleware
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
         await user.save();
 
         res.status(200).json({
