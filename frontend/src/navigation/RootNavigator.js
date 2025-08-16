@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '../store/authSlice';
 import PropertyListScreen from '../screens/PropertyListScreen';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function RootNavigator() {
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="PropertyList" component={PropertyListScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         </Stack.Navigator>
     );
 }
