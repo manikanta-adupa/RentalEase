@@ -22,7 +22,6 @@ export default function ResetPasswordScreen() {
     useEffect(() => {
         if (route.params?.token) {
             setToken(route.params.token);
-            console.log('Token received from deep link:', route.params.token.substring(0, 8) + '...');
         }
     }, [route.params]);
 
@@ -58,22 +57,14 @@ export default function ResetPasswordScreen() {
     };
 
     const handleResetPassword = async () => {
-        console.log('=== RESET PASSWORD DEBUG START ===');
-        console.log('Token length:', token.length);
-        console.log('Password length:', password.length);
-        console.log('Passwords match:', password === confirmPassword);
-
         if (!validateInputs()) return;
 
         setIsLoading(true);
         try {
-            console.log('Making API call to /auth/reset-password...');
             const response = await client.post('/auth/reset-password', {
                 token: token.trim(),
                 password
             });
-
-            console.log('Reset password response:', response.data);
 
             Alert.alert(
                 'Success!', 
@@ -86,8 +77,6 @@ export default function ResetPasswordScreen() {
                 ]
             );
         } catch (error) {
-            console.log('=== RESET PASSWORD ERROR ===');
-            console.log('Error:', error);
             
             let errorMessage = 'Failed to reset password. Please try again.';
             

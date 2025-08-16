@@ -257,9 +257,14 @@ const sendPasswordResetEmail = async (to, name, resetToken) =>{
         
         const context = {
             name,
+            resetToken,
             resetLink,
             expiration: 60 // 1 hour in minutes
         }
+        
+        // Debug: Log the context being passed to template
+        logger.info('Password reset email context:', { name, resetToken: resetToken.substring(0, 8) + '...', expiration: 60 });
+        
         const html = await loadTemplate('password-reset', context);
         const text = `Reset your password by opening this link in the RentalEase app: ${resetLink}`;
         const result = await sendEmail(to, '🔐 Password Reset Request', html, text);

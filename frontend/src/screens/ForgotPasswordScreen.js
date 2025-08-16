@@ -25,19 +25,23 @@ export default function ForgotPasswordScreen() {
         
         setError(null);
         setIsLoading(true);
+        
         try{
             const response = await client.post(`/auth/forgot-password`, { email });
+            
             if(response.data.success){
-                setSuccess(response.data.success);
+                setSuccess(response.data.message || 'Reset email sent successfully!');
             }
             else{
                 setError(response.data.message);
             }
         }
         catch(error){
-            setError(error.response.data.message || 'An error occurred');
+            setError(error.response?.data?.message || 'An error occurred');
         }
-        setIsLoading(false);
+        finally {
+            setIsLoading(false);
+        }
     }
     return (
         <SafeAreaView style={layout.safeArea}>
