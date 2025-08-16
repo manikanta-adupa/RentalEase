@@ -46,7 +46,7 @@ const corsOptions = {
                 'http://localhost:19006',  // Expo web
                 'http://localhost:8081',   // React Native Metro
                 'exp://localhost:19000',   // Expo app
-                'exp://192.168.1.100:19000' // Expo LAN (adjust IP as needed)
+                'exp://192.168.31.208:19000' // Expo LAN (your actual IP)
             ];
             
             if (devOrigins.indexOf(origin) !== -1 || origin.startsWith('exp://')) {
@@ -246,7 +246,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Server accessible at: http://192.168.31.208:${PORT}`);
+    console.log(`Accessible at: http://localhost:${PORT} and http://192.168.31.208:${PORT}`);
 });
 
 // Handle unhandled promise rejections

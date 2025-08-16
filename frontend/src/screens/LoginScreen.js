@@ -25,32 +25,60 @@ export default function LoginScreen() {
         console.log('=== LOGIN DEBUG START ===');
         console.log('Email:', email);
         console.log('Password length:', password.length);
-        console.log('API URL:', client.defaults?.baseURL || 'No baseURL set');
+        console.log('Password (first 3 chars):', password.substring(0, 3) + '***');
+        console.log('API URL:', client.defaults.baseURL);
+        console.log('Client config:', {
+            baseURL: client.defaults.baseURL,
+            timeout: client.defaults.timeout,
+            headers: client.defaults.headers
+        });
         
         dispatch(loginStart());
         try {
             console.log('Making API call to /auth/login...');
+            console.log('Request payload:', { email, password: '***' });
+            
             const res = await client.post('/auth/login', { email, password });
             console.log('=== API RESPONSE SUCCESS ===');
             console.log('Response status:', res.status);
             console.log('Response data:', res.data);
+            console.log('Response headers:', res.headers);
             
             const { token, user } = res.data;
+            console.log('Token present:', !!token);
+            console.log('Token length:', token ? token.length : 0);
+            console.log('User data:', user);
+            
+            console.log('Saving to AsyncStorage...');
             await AsyncStorage.multiSet([
                 ['@token', token],
                 ['@user', JSON.stringify(user)]
             ]);
+            console.log('AsyncStorage save completed');
+            
+            console.log('Setting auth token...');
             setAuthToken(token);
+            console.log('Auth token set');
+            
+            console.log('Dispatching login success...');
             dispatch(loginSuccess({ user, token }));
+            console.log('Login success dispatched');
+            
+            console.log('Navigating to Home...');
             navigation.navigate('Home');
+            console.log('Navigation completed');
             console.log('=== LOGIN SUCCESS COMPLETE ===');
         } catch (error) {
             console.log('=== LOGIN ERROR ===');
             console.log('Error object:', error);
+            console.log('Error name:', error.name);
             console.log('Error message:', error.message);
+            console.log('Error stack:', error.stack);
+            
             if (error.response) {
                 console.log('Error response status:', error.response.status);
                 console.log('Error response data:', error.response.data);
+                console.log('Error response headers:', error.response.headers);
             } else if (error.request) {
                 console.log('Error request:', error.request);
                 console.log('No response received');
@@ -60,6 +88,7 @@ export default function LoginScreen() {
             
             const message = error?.response?.data?.message || "Login failed";
             console.log('Final error message:', message);
+            
             dispatch(loginFailure(message));
             Alert.alert('Login failed', message);
             console.log('=== LOGIN ERROR HANDLED ===');
@@ -200,7 +229,7 @@ export default function LoginScreen() {
                             <TouchableOpacity
                                 style={{ alignItems: 'center' }}
                                 onPress={() => {
-                                    Alert.alert('Forgot Password', 'This feature will be available soon!');
+                                    navigation.navigate('ForgotPassword');
                                 }}
                             >
                                 <Text style={typography.textStyles.link}>

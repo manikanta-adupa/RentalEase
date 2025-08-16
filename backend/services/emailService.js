@@ -249,6 +249,47 @@ const sendNewApplicationEmail = async (to, ownerName, tenant, property, applicat
     }
 }
 
+//send password reset email
+const sendPasswordResetEmail = async (to, name, resetToken) =>{
+    try{
+        const context = {
+            name,
+            resetToken,
+            expiration: 3600000 / 60000 //1 hour in minutes
+        }
+        const html = await loadTemplate('password-reset', context);
+        const text = `Here is your reset token: ${context.resetToken}`;
+        const result = await sendEmail(to, '🔐 Password Reset Request', html, text);
+        logger.info('Password reset email sent successfully:', result.messageId);
+        return result;
+    }
+    catch(error){
+        logger.error('Error sending password reset email:', error);
+        return createResponse(false, 'Password reset email sending failed', null, {error: error.message});
+    }
+}
+
+//send email verification email
+
+const sendEmailVerificationEmail = async (to, name, verificationToken) =>{
+    try{
+        const context = {
+            name,
+            verificationLink: `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`,
+            expiration: 3600000 / 60000 //1 hour in minutes
+        }
+        const html = await loadTemplate('email-verification', context);
+        const text = `Click the link below to verify your email: ${context.verificationLink}`;
+        const result = await sendEmail(to, '✅ Verify Your Email', html, text);
+        logger.info('Email verification email sent successfully:', result.messageId);
+        return result;
+    }
+    catch(error){
+        logger.error('Error sending email verification email:', error);
+        return createResponse(false, 'Email verification email sending failed', null, {error: error.message});
+    }
+}
+
 // Test function for all email templates
 // const testEmailService = async (testEmailAddress = 'test@example.com') => {
 //     console.log('🧪 Testing Email Service...\n');
@@ -312,6 +353,10 @@ module.exports = {
     // Enhanced functions with better context
     sendApplicationStatusEmailEnhanced,
     sendNewApplicationEmail,
+    
+    // Password reset and verification functions
+    sendPasswordResetEmail,
+    sendEmailVerificationEmail,
     
     // Testing function
     // testEmailService,
