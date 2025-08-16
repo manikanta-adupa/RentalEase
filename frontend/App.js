@@ -10,11 +10,31 @@ import { loginSuccess, logout, bootstrapDone, selectAuth } from './src/store/aut
 import { setAuthToken, clearAuthToken, registerOnUnauthorized } from './src/api/client';
 import { View, Text } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as Linking from 'expo-linking';
 
 const useAppDispatch = () => useDispatch();
 const useAppSelector = useSelector;
 
 const queryClient = new QueryClient();
+
+// Deep linking configuration
+const linking = {
+  prefixes: [Linking.createURL('/'), 'rentalease://'],
+  config: {
+    screens: {
+      ResetPassword: {
+        path: '/reset-password',
+        parse: {
+          token: (token) => token,
+        },
+      },
+      Login: 'login',
+      Home: 'home',
+      PropertyList: 'properties',
+      ForgotPassword: 'forgot-password',
+    },
+  },
+};
 
 function AppShell(){
   const dispatch = useAppDispatch();
@@ -52,7 +72,7 @@ function AppShell(){
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
-        <NavigationContainer> 
+        <NavigationContainer linking={linking}> 
           <RootNavigator />
         </NavigationContainer>
       </QueryClientProvider>
