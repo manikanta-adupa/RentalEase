@@ -205,8 +205,37 @@ export const layout = StyleSheet.create({
     flex: 1,
   },
 
+  flex: {
+    flex: 1,
+  },
+
   spacer: {
     flex: 1,
+  },
+
+  // Input Label Styles
+  inputLabel: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+
+  // Text Input Styles
+  textInput: {
+    height: 52,
+    borderWidth: 2,
+    borderColor: colors.border.light,
+    borderRadius: spacing.md,
+    paddingHorizontal: spacing.md,
+    fontSize: typography.fontSize.base,
+    backgroundColor: colors.neutral[50],
+    color: colors.text.primary,
+  },
+
+  textInputFocused: {
+    borderColor: colors.border.focus,
+    backgroundColor: colors.primary.background,
   },
 
   // Status Styles
