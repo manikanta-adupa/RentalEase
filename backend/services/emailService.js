@@ -252,16 +252,14 @@ const sendNewApplicationEmail = async (to, ownerName, tenant, property, applicat
 //send password reset email
 const sendPasswordResetEmail = async (to, name, resetToken) =>{
     try{
-        // Create mobile app deep link
-        const resetLink = `rentalease://reset-password?token=${resetToken}`;
-        
+        // Simple approach: just provide the token for manual entry
         const context = {
             name,
-            resetLink,
+            resetToken,
             expiration: 60 // 1 hour in minutes
         }
         const html = await loadTemplate('password-reset', context);
-        const text = `Reset your password by opening this link in the RentalEase app: ${resetLink}`;
+        const text = `Reset your password using this token in the RentalEase app: ${resetToken}`;
         const result = await sendEmail(to, '🔐 Password Reset Request', html, text);
         logger.info('Password reset email sent successfully:', result.messageId);
         return result;

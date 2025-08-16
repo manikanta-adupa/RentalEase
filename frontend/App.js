@@ -8,18 +8,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginSuccess, logout, bootstrapDone, selectAuth } from './src/store/authSlice';
 import { setAuthToken, clearAuthToken, registerOnUnauthorized } from './src/api/client';
-import { View, Text } from 'react-native';
+import { View, Text, Linking } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as Linking from 'expo-linking';
 
 const useAppDispatch = () => useDispatch();
 const useAppSelector = useSelector;
 
 const queryClient = new QueryClient();
 
-// Deep linking configuration
+// Simple deep linking configuration for React Navigation
 const linking = {
-  prefixes: [Linking.createURL('/'), 'rentalease://'],
+  prefixes: ['rentalease://'],
   config: {
     screens: {
       ResetPassword: {
@@ -30,7 +29,7 @@ const linking = {
       },
       Login: 'login',
       Home: 'home',
-      PropertyList: 'properties',
+      PropertyList: 'properties', 
       ForgotPassword: 'forgot-password',
     },
   },
