@@ -153,7 +153,7 @@ export default function LoginScreen() {
                                 disabled={!isFormValid}
                                 activeOpacity={0.8}
                             >
-                                {isLoading ? (
+                                {isLoading ? (          
                                     <View style={layout.row}>
                                         <ActivityIndicator size="small" color={colors.text.inverse} />
                                         <Text style={[typography.textStyles.button, { 
@@ -197,7 +197,7 @@ export default function LoginScreen() {
                             <TouchableOpacity
                                 style={{ alignItems: 'center' }}
                                 onPress={() => {
-                                    Alert.alert('Registration', 'Registration feature will be available soon!');
+                                    navigation.navigate('Register');
                                 }}
                             >
                                 <Text style={[typography.textStyles.body, { 

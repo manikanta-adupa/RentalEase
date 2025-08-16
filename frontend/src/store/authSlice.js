@@ -37,17 +37,36 @@ const authSlice = createSlice({
             //clear error
             state.error = null;
         },
+        registerStart: (state) => {
+            state.status = 'loading';
+            state.error = null;
+        },
+        registerSuccess: (state, action) => {
+            state.status = 'succeeded';
+            state.token = action.payload.token;
+            state.user = action.payload.user;
+            //clear error
+            state.error = null;
+        },
+        registerFailure: (state, action) => {
+            state.status = 'failed';
+            state.user = null;
+            state.error = action.payload;
+            //clear token
+            state.token = null;
+        },
         bootstrapDone: (state) =>{
             state.bootstrapped = true;
         }
     }
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, bootstrapDone } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, bootstrapDone, registerStart, registerSuccess, registerFailure } = authSlice.actions;
 export default authSlice.reducer;
 
-export const selectAuth = (state) => state.auth;
-export const selectIsAuthenticated = (state) => Boolean(state.auth.token);
+//selectors
+export const selectAuth = (state) => state.auth; //select the auth slice from the store
+export const selectIsAuthenticated = (state) => Boolean(state.auth.token); //check if the user is authenticated
 
 
 
