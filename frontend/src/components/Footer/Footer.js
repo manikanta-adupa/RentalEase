@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { colors, typography, spacing, layout } from '../../styles';
 
 export default function Footer() {
@@ -8,30 +8,32 @@ export default function Footer() {
     const route = useRoute();
     const [activeTab, setActiveTab] = useState('home');
 
-    // Update active tab when route changes
-    useEffect(() => {
-        const currentRoute = route.name;
-        let tabName = 'home';
-        
-        switch (currentRoute) {
-            case 'Home':
-                tabName = 'home';
-                break;
-            case 'PropertyList':
-                tabName = 'properties';
-                break;
-            case 'AddProperty':
-                tabName = 'addProperty';
-                break;
-            case 'MyProfile':
-                tabName = 'profile';
-                break;
-            default:
-                tabName = 'home';
-        }
-        
-        setActiveTab(tabName);
-    }, [route.name]);
+    // Update active tab when route changes OR when screen comes into focus
+    useFocusEffect( //useFocusEffect is a hook that is used to focus on a screen
+        React.useCallback(() => {//useCallback is a hook that is used to memoize a function
+            const currentRoute = route.name;
+            let tabName = 'home';
+            
+            switch (currentRoute) {
+                case 'Home':
+                    tabName = 'home';
+                    break;
+                case 'PropertyList':
+                    tabName = 'properties';
+                    break;
+                case 'AddProperty':
+                    tabName = 'addProperty';
+                    break;
+                case 'MyProfile':
+                    tabName = 'profile';
+                    break;
+                default:
+                    tabName = 'home';
+            }
+            
+            setActiveTab(tabName);
+        }, [route.name])
+    );
 
     const handleTabPress = (tabName, screenName) => {
         setActiveTab(tabName);
