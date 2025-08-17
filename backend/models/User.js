@@ -18,12 +18,12 @@ const userSchema = new mongoose.Schema({
         trim: true,
         match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Please enter a valid email"]
     },
-    role: {
-            type: String,
-            enum: ["owner", "tenant"],
-            required: true,
-            default: "tenant",
-    },
+    // role: {
+    //         type: String,
+    //         enum: ["owner", "tenant"],
+    //         required: true,
+    //         default: "tenant",
+    // },
     phone: {
         type: String,
         required: true,
@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
 
 // Add database indexes for performance
 userSchema.index({ email: 1 });
-userSchema.index({ role: 1 });
+// userSchema.index({ role: 1 });
 userSchema.index({ phone: 1 });
 
 //hash password before saving

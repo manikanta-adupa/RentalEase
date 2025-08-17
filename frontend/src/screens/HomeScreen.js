@@ -91,20 +91,7 @@ export default function HomeScreen() {
                             </Text>
                         </View>
                         
-                        <View>
-                            <Text style={typography.textStyles.caption}>ROLE</Text>
-                            <View style={[
-                                layout.badge,
-                                { backgroundColor: user?.role === 'owner' ? colors.accent.main : colors.secondary.main }
-                            ]}>
-                                <Text style={[typography.textStyles.buttonSmall, { 
-                                    color: colors.text.inverse,
-                                    textTransform: 'capitalize'
-                                }]}>
-                                    {user?.role}
-                                </Text>
-                            </View>
-                        </View>
+
                     </View>
                 )}
 

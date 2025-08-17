@@ -48,10 +48,6 @@ const validateRegistration = [
         .isMobilePhone('any', { strictMode: false })
         .withMessage('Please provide a valid phone number'),
         
-    body('role')
-        .isIn(['owner', 'tenant'])
-        .withMessage('Role must be either owner or tenant'),
-        
     body('address')
         .optional()
         .trim()

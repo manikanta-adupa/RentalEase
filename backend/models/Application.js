@@ -178,7 +178,7 @@ applicationSchema.statics.expireOldApplications = async function() {
     const result = await this.updateMany(
       {
         status: 'pending',
-        applicationDate: { $lt: thirtyDaysAgo },
+        applicationDate: { $lt: thirtyDaysAgo },//application date is less than 30 days ago
         isActive: true
       },
       {
@@ -252,7 +252,7 @@ applicationSchema.statics.findByOwner = function(ownerId, options = {}) {
   if (options.status) query.status = options.status;
   
   return this.find(query)
-    .populate('tenant', 'name email phone profilePicture')
+    .populate('tenant', 'name email phone')
     .populate('property', 'title location pricing')
     .sort({ applicationDate: -1 });
 };
@@ -263,7 +263,7 @@ applicationSchema.statics.findByProperty = function(propertyId, options = {}) {
   if (options.status) query.status = options.status;
   
   return this.find(query)
-    .populate('tenant', 'name email phone profilePicture')
+    .populate('tenant', 'name email phone')
     .sort({ applicationDate: -1 });
 };
 

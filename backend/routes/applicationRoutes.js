@@ -4,7 +4,7 @@ const router = express.Router();
 // Import middleware
 const { auth } = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimiter');
-const { requireApplicationOwner } = require('../middleware/roleMiddleware');
+// const { requireApplicationOwner } = require('../middleware/roleMiddleware');
 
 // Import validation middleware
 const { 
@@ -25,7 +25,8 @@ const {
 // Import controller functions
 const {
   createApplication,
-  getApplications,
+  getMyApplications,
+  getApplicationsForMyProperties,
   getApplicationById,
   updateApplicationStatus,
   withdrawApplication,
@@ -63,7 +64,12 @@ router.post('/', validateApplicationCreation, createApplication);
 // @route   GET /api/applications
 // @desc    Get applications (filtered by user role and status)
 // @access  Private
-router.get('/', validatePagination, getApplications);
+router.get('/my', validatePagination, getMyApplications);
+
+// @route   GET /api/applications/received
+// @desc    Get applications received for my properties (as owner)
+// @access  Private
+router.get('/received', validatePagination, getApplicationsForMyProperties);
 
 // @route   GET /api/applications/stats
 // @desc    Get application statistics for dashboard
@@ -114,7 +120,7 @@ router.put('/:id/withdraw', validateObjectId('id'), withdrawApplication);
 // @access  Private (Application owner - tenant)
 router.post('/:applicationId/documents',
     validateObjectId('applicationId'),
-    requireApplicationOwner,
+    // requireApplicationOwner,
     uploadApplicationDocumentsMiddleware,
     handleUploadErrors,
     validateApplicationDocuments,
@@ -124,6 +130,20 @@ router.post('/:applicationId/documents',
             const documentTypes = req.body.documentTypes ? 
                 JSON.parse(req.body.documentTypes) : 
                 req.files.map(() => 'other');
+            //check if the application is owned by the user
+            const application = await Application.findById(req.params.applicationId);
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found",
+                });
+            }
+            if (application.tenant.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to upload documents for this application",
+                });
+            }
 
             const result = await uploadApplicationDocuments(
                 req.files, 
@@ -157,6 +177,20 @@ router.get('/:applicationId/documents',
                 limit: parseInt(req.query.limit) || 50,
                 cursor: req.query.cursor
             };
+            //check if the application is owned by the user
+            const application = await Application.findById(req.params.applicationId);
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found",
+                });
+            }
+            if (application.tenant.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to view documents for this application",
+                });
+            }
             const result = await getApplicationDocuments(req.params.applicationId, options);
             
             if (result.success) {
@@ -179,7 +213,7 @@ router.get('/:applicationId/documents',
 // @access  Private (Application owner - tenant)
 router.put('/:applicationId/documents/:documentIndex',
     validateObjectId('applicationId'),
-    requireApplicationOwner,
+    // requireApplicationOwner,
     uploadSingleDocument,
     handleUploadErrors,
     async (req, res) => {
@@ -192,6 +226,20 @@ router.put('/:applicationId/documents/:documentIndex',
             }
 
             const documentIndex = parseInt(req.params.documentIndex);
+            //check if the application is owned by the user
+            const application = await Application.findById(req.params.applicationId);
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found",
+                });
+            }
+            if (application.tenant.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to replace this application",
+                });
+            }
             if (isNaN(documentIndex) || documentIndex < 0) {
                 return res.status(400).json({
                     success: false,
@@ -227,10 +275,24 @@ router.put('/:applicationId/documents/:documentIndex',
 // @access  Private (Application owner - tenant)
 router.delete('/:applicationId/documents/:documentIndex',
     validateObjectId('applicationId'),
-    requireApplicationOwner,
+    // requireApplicationOwner,
     async (req, res) => {
         try {
             const documentIndex = parseInt(req.params.documentIndex);
+            //check if the application is owned by the user
+            const application = await Application.findById(req.params.applicationId);
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found",
+                });
+            }
+            if (application.tenant.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to delete this application",
+                });
+            }
             if (isNaN(documentIndex) || documentIndex < 0) {
                 return res.status(400).json({
                     success: false,
@@ -263,11 +325,24 @@ router.delete('/:applicationId/documents/:documentIndex',
 // @access  Private (Application owner - tenant)
 router.delete('/:applicationId/documents',
     validateObjectId('applicationId'),
-    requireApplicationOwner,
+    //  requireApplicationOwner,
     async (req, res) => {
         try {
             const result = await deleteAllApplicationFiles(req.params.applicationId);
-            
+            //check if the application is owned by the user
+            const application = await Application.findById(req.params.applicationId);
+            if (!application) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Application not found",
+                });
+            }
+            if (application.tenant.toString() !== req.user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to delete this application",
+                });
+            }
             if (result.success) {
                 res.json(result);
             } else {

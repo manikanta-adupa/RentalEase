@@ -21,7 +21,7 @@ const {
     deleteAllPropertyFiles
 } = require("../services/imageService");
 const { auth } = require("../middleware/auth");
-const { requireOwner, requirePropertyOwner } = require("../middleware/roleMiddleware");
+// const { requireOwner, requirePropertyOwner } = require("../middleware/roleMiddleware");
 const { validateProperty, validateObjectId } = require("../middleware/validation");
 const { apiLimiter } = require("../middleware/rateLimiter");
 const {
@@ -45,9 +45,9 @@ router.get("/search", searchProperties);
 router.get("/:id", validateObjectId('id'), getPropertyById);
 
 // Protected routes (authentication + role required)
-router.post("/", auth, requireOwner, validateProperty, createProperty);
-router.put("/:id", validateObjectId('id'), auth, requirePropertyOwner, validateProperty, updateProperty);
-router.delete("/:id", validateObjectId('id'), auth, requirePropertyOwner, deleteProperty);
+router.post("/", auth, validateProperty, createProperty);
+router.put("/:id", validateObjectId('id'), auth, validateProperty, updateProperty);
+router.delete("/:id", validateObjectId('id'), auth, deleteProperty);
 
 // ===========================
 // PROPERTY FILE MANAGEMENT ROUTES
@@ -59,7 +59,6 @@ router.delete("/:id", validateObjectId('id'), auth, requirePropertyOwner, delete
 router.post("/:propertyId/images",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     uploadPropertyImagesMiddleware,
     handleUploadErrors,
     validatePropertyImages,
@@ -83,7 +82,7 @@ router.post("/:propertyId/images",
 
 // Get property images
 router.get("/:propertyId/images",
-    validateObjectId('propertyId'),
+    validateObjectId('propertyId'),//validate the propertyId
     async (req, res) => {
         try {
             const options = {
@@ -106,7 +105,6 @@ router.get("/:propertyId/images",
 router.put("/:propertyId/images/:publicId",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     uploadSingleImage,
     handleUploadErrors,
     async (req, res) => {
@@ -141,7 +139,6 @@ router.put("/:propertyId/images/:publicId",
 router.put("/:propertyId/images/reorder",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     async (req, res) => {
         try {
             const { newOrder } = req.body;
@@ -171,7 +168,6 @@ router.put("/:propertyId/images/reorder",
 router.delete("/:propertyId/images/:publicId",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     async (req, res) => {
         try {
             const result = await deletePropertyImage(req.params.propertyId, req.params.publicId);
@@ -196,7 +192,6 @@ router.delete("/:propertyId/images/:publicId",
 router.post("/:propertyId/documents",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     uploadPropertyDocumentsMiddleware,
     handleUploadErrors,
     validatePropertyDocuments,
@@ -262,7 +257,6 @@ router.get("/:propertyId/files",
 router.delete("/:propertyId/files",
     validateObjectId('propertyId'),
     auth,
-    requirePropertyOwner,
     async (req, res) => {
         try {
             const result = await deleteAllPropertyFiles(req.params.propertyId);
