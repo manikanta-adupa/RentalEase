@@ -143,7 +143,7 @@ const propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null,
-        index: true
+        index: true //index the current tenant
     },
     //property images
     images: [{

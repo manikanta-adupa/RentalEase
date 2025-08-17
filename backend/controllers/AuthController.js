@@ -6,7 +6,7 @@ const emailService = require("../services/emailService");
 // const logger = require("../utils/logger");
 //register a new user
 exports.register = async (req, res) => {
-    const { name, email, password, phone, address, role } = req.body;
+    const { name, email, password, phone, address } = req.body;
     try{
         const existingUser = await User.findOne({ email });
         if(existingUser){
@@ -15,10 +15,10 @@ exports.register = async (req, res) => {
                 message: "User already exists" 
             });
         }
-        const newUser = new User({ name, email, password, phone, address, role });
+        const newUser = new User({ name, email, password, phone, address });
         await newUser.save();
         ///generate token
-        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
         ///send welcome email
         try{
             await Promise.all([
@@ -36,7 +36,6 @@ exports.register = async (req, res) => {
                 id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
-                role: newUser.role,
             },
             token,
         });
@@ -68,7 +67,7 @@ exports.login = async (req, res) => {
                 message: "Invalid credentials" 
             });
         }
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
         res.status(200).json({ 
             success: true,
             message: "Login successful", 
@@ -76,7 +75,6 @@ exports.login = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
             },
             token 
         });

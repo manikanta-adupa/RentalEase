@@ -17,12 +17,12 @@ const createApplication = async (req, res) => {
     } = req.body;
 
     // Validate tenant role
-    if (req.user.role !== 'tenant') {
-      return res.status(403).json({
-        success: false,
-        message: 'Only tenants can create applications'
-      });
-    }
+    // if (req.user.role !== 'tenant') {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: 'Only tenants can create applications'
+    //   });
+    // }
 
     // Check if property exists and is available
     const propertyDoc = await Property.findById(property);
@@ -140,82 +140,53 @@ const createApplication = async (req, res) => {
   }
 };
 
-// @desc    Get applications (filtered by user role)
-// @route   GET /api/applications
+// @desc    Get applications I have applied for (as tenant)
+// @route   GET /api/applications/my
 // @access  Private
-const getApplications = async (req, res) => {
+const getMyApplications = async (req, res) => {
   try {
-    const { status, page = 1, limit = 10, property } = req.query;
     const userId = req.user.id;
-    const userRole = req.user.role;
-
-    let applications;
-    let totalCount;
-
-    const options = {};
-    if (status) options.status = status;
-
-    // Calculate pagination
-    const skip = (page - 1) * limit;
-
-    if (userRole === 'tenant') {
-      // Tenant sees their own applications
-      applications = await Application.findByTenant(userId, options)
-        .skip(skip)
-        .limit(parseInt(limit));
-      //count applications for tenant
-      totalCount = await Application.countDocuments({
-        tenant: userId,
-        isActive: true,
-        ...(status && { status })
-      });
-
-    } else if (userRole === 'owner') {
-      // Owner sees applications for their properties
-      let query = { owner: userId, isActive: true };
-      if (status) query.status = status;
-      if (property) query.property = property;
-
-      applications = await Application.findByOwner(userId, options)
-        .skip(skip)
-        .limit(parseInt(limit));
-      
-      totalCount = await Application.countDocuments(query);
-
-    } else {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied'
-      });
-    }
-
-    // Calculate pagination info
-    const totalPages = Math.ceil(totalCount / limit);
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-
+    const applications = await Application.find({ tenant: userId })
+      .populate('property', 'title address city state monthlyRent propertyType images')
+      .populate('owner', 'name email phone');
     res.status(200).json({
       success: true,
-      data: applications,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages,
-        totalCount,
-        hasNextPage,
-        hasPrevPage,
-        limit: parseInt(limit)
-      }
+      data: applications
     });
-
   } catch (error) {
-    console.error('Error fetching applications:', error);
     res.status(500).json({
       success: false,
-      message: 'Error fetching applications',
+      message: 'Error fetching your applications',
       error: error.message
     });
   }
 };
+
+// @desc    Get applications received for my properties (as owner)
+// @route   GET /api/applications/received
+// @access  Private
+const getApplicationsForMyProperties = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // Find all properties owned by the user
+    const myPropertyIds = await Property.find({ owner: userId }).distinct('_id');
+    // Find all applications for those properties
+    const applications = await Application.find({ property: { $in: myPropertyIds } })
+      .populate('property', 'title address city state monthlyRent propertyType images')
+      .populate('tenant', 'name email phone');
+    res.status(200).json({
+      success: true,
+      data: applications
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching applications for your properties',
+      error: error.message
+    });
+  }
+};
+
 
 // @desc    Get single application by ID
 // @route   GET /api/applications/:id
@@ -224,12 +195,14 @@ const getApplicationById = async (req, res) => {
   try {
     const applicationId = req.params.id;
     const userId = req.user.id;
-    const userRole = req.user.role;
 
     const application = await Application.findById(applicationId)
       .populate('tenant', 'name email phone profilePicture address')
-      .populate('property', 'title description location pricing amenities images propertyType')
-      .populate('owner', 'name email phone');
+      .populate({
+        path: 'property',
+        select: 'title description location pricing amenities images propertyType owner',
+        populate: { path: 'owner', select: 'name email phone' }
+      });
 
     if (!application) {
       return res.status(404).json({
@@ -238,13 +211,10 @@ const getApplicationById = async (req, res) => {
       });
     }
 
-    // Check access permissions
-    const hasAccess = (
-      (userRole === 'tenant' && application.tenant._id.toString() === userId) ||
-      (userRole === 'owner' && application.owner._id.toString() === userId)
-    );
-
-    if (!hasAccess) {
+    // Access: tenant or property owner
+    const isTenant = application.tenant._id.toString() === userId;
+    const isPropertyOwner = application.property.owner._id.toString() === userId;
+    if (!isTenant && !isPropertyOwner) {
       return res.status(403).json({
         success: false,
         message: 'Access denied'
@@ -255,9 +225,7 @@ const getApplicationById = async (req, res) => {
       success: true,
       data: application
     });
-
   } catch (error) {
-    console.error('Error fetching application:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching application',
@@ -275,11 +243,11 @@ const updateApplicationStatus = async (req, res) => {
     const { status, ownerResponse } = req.body;
     const userId = req.user.id;
 
-    // Validate owner role
-    if (req.user.role !== 'owner') {
+    // Validate owner of the property not by role
+    if (application.property.owner.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message: 'Only property owners can update application status'
+        message: 'You can only update applications for your own properties'
       });
     }
 
@@ -369,11 +337,11 @@ const withdrawApplication = async (req, res) => {
     const applicationId = req.params.id;
     const userId = req.user.id;
 
-    // Validate tenant role
-    if (req.user.role !== 'tenant') {
+    // Validate ony person who applied for the property can withdraw the application
+    if (application.tenant.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message: 'Only tenants can withdraw applications'
+        message: 'Only the tenant who applied for the property can withdraw the application'
       });
     }
 
@@ -429,8 +397,8 @@ const getApplicationsByProperty = async (req, res) => {
     const userId = req.user.id;
     const { status } = req.query;
 
-    // Validate owner role
-    if (req.user.role !== 'owner') {
+    // Validate only owner of the property can view the applications
+    if (property.owner.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Only property owners can view property applications'
@@ -484,105 +452,45 @@ const getApplicationsByProperty = async (req, res) => {
 // @access  Private
 const getApplicationStats = async (req, res) => {
   try {
-    const mongoose = require('mongoose');
-    const userId = new mongoose.Types.ObjectId(req.user.id);
-    const userRole = req.user.role;
+    const userId = req.user.id;
 
-    let stats = {};
-
-    if (userRole === 'tenant') {
-      // Debug: Check total applications for this tenant
-      const totalApplications = await Application.countDocuments({ tenant: userId });
-      const activeApplications = await Application.countDocuments({ tenant: userId, isActive: true });
-      
-      console.log(`Debug - Tenant ${userId}: Total apps: ${totalApplications}, Active apps: ${activeApplications}`);
-
-      // Tenant statistics
-      const tenantStats = await Application.aggregate([
-        { $match: { tenant: userId, isActive: true } },
-        {
-          $group: {
-            _id: '$status',
-            count: { $sum: 1 }
-          }
+    // 1. Applications where user is the tenant (applied for)
+    const myApplications = await Application.aggregate([
+      { $match: { tenant: mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
         }
-      ]);
+      }
+    ]);
 
-      console.log('Debug - Tenant stats result:', tenantStats);
-
-      stats = {
-        total: tenantStats.reduce((sum, stat) => sum + stat.count, 0),
-        pending: tenantStats.find(s => s._id === 'pending')?.count || 0,
-        approved: tenantStats.find(s => s._id === 'approved')?.count || 0,
-        rejected: tenantStats.find(s => s._id === 'rejected')?.count || 0,
-        withdrawn: tenantStats.find(s => s._id === 'withdrawn')?.count || 0
-      };
-
-    } else if (userRole === 'owner') {
-      // Debug: Check total applications for this owner
-      const totalApplications = await Application.countDocuments({ owner: userId });
-      const activeApplications = await Application.countDocuments({ owner: userId, isActive: true });
-      
-      console.log(`Debug - Owner ${userId}: Total apps: ${totalApplications}, Active apps: ${activeApplications}`);
-
-      // Owner statistics
-      const ownerStats = await Application.aggregate([
-        { $match: { owner: userId, isActive: true } },
-        {
-          $group: {
-            _id: '$status',
-            count: { $sum: 1 }
-          }
+    // 2. Applications for properties the user owns (received)
+    // First, get all property IDs owned by the user
+    const myPropertyIds = await Property.find({ owner: userId }).distinct('_id');
+    const receivedApplications = await Application.aggregate([
+      { $match: { property: { $in: myPropertyIds } } },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
         }
-      ]);
+      }
+    ]);
 
-      console.log('Debug - Owner stats result:', ownerStats);
-
-      stats = {
-        total: ownerStats.reduce((sum, stat) => sum + stat.count, 0),
-        pending: ownerStats.find(s => s._id === 'pending')?.count || 0,
-        approved: ownerStats.find(s => s._id === 'approved')?.count || 0,
-        rejected: ownerStats.find(s => s._id === 'rejected')?.count || 0
-      };
-
-      // Average response time for decided applications
-      const responseTimeStats = await Application.aggregate([
-        { 
-          $match: { 
-            owner: userId, 
-            isActive: true, 
-            status: { $in: ['approved', 'rejected'] },
-            decisionDate: { $exists: true }
-          } 
-        },
-        {
-          $project: {
-            responseTime: {
-              $divide: [
-                { $subtract: ['$decisionDate', '$applicationDate'] },
-                1000 * 60 * 60 * 24 // Convert to days
-              ]
-            }
-          }
-        },
-        {
-          $group: {
-            _id: null,
-            avgResponseTime: { $avg: '$responseTime' }
-          }
-        }
-      ]);
-
-      stats.avgResponseTimeInDays = responseTimeStats[0]?.avgResponseTime || 0;
-    }
+    // Helper to convert aggregation result to object
+    const statsToObj = (arr) =>
+      arr.reduce((acc, stat) => {
+        acc[stat._id] = stat.count;
+        return acc;
+      }, {});
 
     res.status(200).json({
       success: true,
-      data: stats
+      myApplications: statsToObj(myApplications),
+      receivedApplications: statsToObj(receivedApplications)
     });
-
   } catch (error) {
-    console.error('Error fetching application stats:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching application statistics',
@@ -595,8 +503,8 @@ const getApplicationStats = async (req, res) => {
 const getAllApplicationsDebug = async (req, res) => {
   try {
     const applications = await Application.find({})
-      .populate('tenant', 'name email role')
-      .populate('owner', 'name email role')
+      .populate('tenant', 'name email')
+      .populate('owner', 'name email')
       .populate('property', 'title isAvailable currentTenant')
       .select('tenant owner property status isActive applicationDate autoRejected')
       .sort({ applicationDate: -1 });
@@ -823,7 +731,9 @@ const diagnoseDataInconsistencies = async (req, res) => {
 
 module.exports = {
   createApplication,
-  getApplications,
+  // getApplications,
+  getMyApplications,
+  getApplicationsForMyProperties,
   getApplicationById,
   updateApplicationStatus,
   withdrawApplication,

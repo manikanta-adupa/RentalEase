@@ -106,7 +106,7 @@ exports.getAllProperties = async (req, res) => {
         const queryObject = { isAvailable: true };
         
         // Allow admin/debugging to see all properties
-        if (req.query.includeUnavailable === 'true' && req.user?.role === 'owner') {
+        if (req.query.includeUnavailable === 'true') {
             delete queryObject.isAvailable;
         }
         
@@ -262,6 +262,20 @@ exports.getPropertyById = async (req, res) => {
 exports.updateProperty = async (req, res) => {
     try {
         //update property
+        //check if the property is owned by the user
+        const property = await Property.findById(req.params.id);
+        if (!property) {
+            return res.status(404).json({
+                success: false,
+                message: "Property not found",
+            });
+        }
+        if (property.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to update this property",
+            });
+        }
         const {
             title, description, propertyType, furnishingStatus,
             address, city, state, monthlyRent, securityDeposit,
@@ -312,6 +326,20 @@ exports.updateProperty = async (req, res) => {
 exports.deleteProperty = async (req, res) => {
     try {
         //delete property
+        //check if the property is owned by the user
+        const property = await Property.findById(req.params.id);
+        if (!property) {
+            return res.status(404).json({
+                success: false,
+                message: "Property not found",
+            });
+        }
+        if (property.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to delete this property",
+            });
+        }
         await Property.findByIdAndDelete(req.params.id);
         res.status(200).json({
             success: true,

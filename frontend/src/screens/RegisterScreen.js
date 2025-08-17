@@ -14,7 +14,6 @@ export default function RegisterScreen() {
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
-    const [role, setRole] = useState('tenant');
     const [showPassword, setShowPassword] = useState(false);
     
     // Focus states for inputs
@@ -111,7 +110,6 @@ export default function RegisterScreen() {
                 password,
                 phone: phone.replace(/\s/g, ''),
                 address: address.trim(),
-                role
             });
             const {token, user} = response.data;
             await AsyncStorage.multiSet([
@@ -176,65 +174,7 @@ export default function RegisterScreen() {
                                 Create Account
                             </Text>
 
-                            {/* Role Selection */}
-                            <View style={layout.inputGroup}>
-                                <Text style={typography.textStyles.label}>
-                                    I am a
-                                </Text>
-                                <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.xs }}>
-                                    <TouchableOpacity
-                                        style={[
-                                            layout.input,
-                                            { 
-                                                flex: 1, 
-                                                flexDirection: 'row', 
-                                                alignItems: 'center', 
-                                                justifyContent: 'center',
-                                                backgroundColor: role === 'tenant' ? colors.primary.background : colors.neutral[50]
-                                            }
-                                        ]}
-                                        onPress={() => setRole('tenant')}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Text style={{ fontSize: typography.fontSize.lg, marginRight: spacing.xs }}>🏠</Text>
-                                        <Text style={[
-                                            typography.textStyles.body, 
-                                            { color: role === 'tenant' ? colors.primary.main : colors.text.secondary }
-                                        ]}>
-                                            Tenant
-                                        </Text>
-                                        {role === 'tenant' && (
-                                            <Text style={{ fontSize: typography.fontSize.sm, marginLeft: spacing.xs }}>✓</Text>
-                                        )}
-                                    </TouchableOpacity>
-                                    
-                                    <TouchableOpacity
-                                        style={[
-                                            layout.input,
-                                            { 
-                                                flex: 1, 
-                                                flexDirection: 'row', 
-                                                alignItems: 'center', 
-                                                justifyContent: 'center',
-                                                backgroundColor: role === 'owner' ? colors.primary.background : colors.neutral[50]
-                                            }
-                                        ]}
-                                        onPress={() => setRole('owner')}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Text style={{ fontSize: typography.fontSize.lg, marginRight: spacing.xs }}>🏘️</Text>
-                                        <Text style={[
-                                            typography.textStyles.body, 
-                                            { color: role === 'owner' ? colors.primary.main : colors.text.secondary }
-                                        ]}>
-                                            Owner
-                                        </Text>
-                                        {role === 'owner' && (
-                                            <Text style={{ fontSize: typography.fontSize.sm, marginLeft: spacing.xs }}>✓</Text>
-                                        )}
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+
 
                             {/* Name Input */}
                             <View style={layout.inputGroup}>
