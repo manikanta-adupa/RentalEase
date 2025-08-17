@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import useHealthCheck from '../hooks/useHealthCheck';
 import { colors, typography, spacing, layout } from '../styles';
+import Footer from '../components/Footer/Footer';
 
 export default function HomeScreen() {
     const dispatch = useDispatch();
@@ -95,43 +96,9 @@ export default function HomeScreen() {
                     </View>
                 )}
 
-                {/* Spacer to push buttons to bottom */}
-                <View style={layout.spacer} />
 
-                {/* Action Buttons */}
-                <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}>
-                    {isAuthenticated ? (
-                        <View style={layout.buttonGroup}>
-                            <TouchableOpacity
-                                style={layout.buttonPrimary}
-                                onPress={() => navigation.navigate('PropertyList')}
-                            >
-                                <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
-                                    🏠 View Properties
-                                </Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={layout.buttonSecondary}
-                                onPress={handleLogout}
-                            >
-                                <Text style={[typography.textStyles.button, { color: colors.error.main }]}>
-                                    Logout
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <TouchableOpacity
-                            style={layout.buttonPrimary}
-                            onPress={() => navigation.navigate('Login')}
-                        >
-                            <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
-                                Login to Continue
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
             </ScrollView>
+            <Footer />
         </SafeAreaView>
     );
 }

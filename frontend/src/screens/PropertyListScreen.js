@@ -2,6 +2,7 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView
 import { useNavigation } from '@react-navigation/native';
 import useProperties from '../hooks/useProperties';
 import { colors, typography, spacing, layout } from '../styles';
+import Footer from '../components/Footer';
 
 export default function PropertyListScreen() {
     const { data, isLoading, error, refetch } = useProperties();
@@ -147,7 +148,6 @@ export default function PropertyListScreen() {
                         style={layout.cardProperty}
                         onPress={() => {
                             // navigation.navigate('PropertyDetails', { propertyId: item._id || item.id });
-                            console.log('Property selected:', item.title);
                         }}
                         activeOpacity={0.7}
                     >
@@ -240,6 +240,7 @@ export default function PropertyListScreen() {
                     </View>
                 )}
             />
+            <Footer />
         </SafeAreaView>
     )
 }

@@ -158,6 +158,21 @@ export const layout = StyleSheet.create({
     gap: spacing.button,
   },
 
+  // Footer Styles
+  footer: {
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.neutral[200],
+  },
+
+  footerTab: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    minWidth: 80,
+  },
+
   // List Styles
   listContainer: {
     flex: 1,
