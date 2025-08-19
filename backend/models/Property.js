@@ -191,8 +191,9 @@ propertySchema.index({ isAvailable: 1, city: 1 });
 // Geospatial index for location-based searches (future map features)
 propertySchema.index({ "coordinates.latitude": 1, "coordinates.longitude": 1 });
 
-// Prevent duplicate properties: same owner + same address + same area = duplicate
+// Prevent duplicate properties: same owner + same address + same area + same title = duplicate
 propertySchema.index({ 
+    title: 1,
     owner: 1, 
     address: 1, 
     area: 1 
