@@ -7,7 +7,6 @@ import Footer from '../components/Footer';
 
 export default function MyProfileScreen() {
     const { user } = useSelector(selectAuth);
-    
     return (
         <SafeAreaView style={layout.safeArea}>
             <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
