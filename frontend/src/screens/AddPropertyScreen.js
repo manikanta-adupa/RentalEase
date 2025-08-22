@@ -401,6 +401,46 @@ export default function AddPropertyScreen() {
                                         onChangeText={setPostalCode}
                                     />
                                 </View>
+
+                                <View style={layout.inputGroup}>
+                                    <Text style={[typography.textStyles.label, { 
+                                        fontSize: 16, 
+                                        fontWeight: '600',
+                                        color: colors.text.secondary,
+                                        marginBottom: spacing.sm,
+                                        marginTop: spacing.md
+                                    }]}>
+                                        Coordinates
+                                    </Text>
+                                    <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[typography.textStyles.label, { fontSize: 14, marginBottom: spacing.xs }]}>
+                                                Latitude
+                                            </Text>
+                                            <TextInput
+                                                style={layout.input}
+                                                placeholder="40.7128"
+                                                placeholderTextColor={colors.text.tertiary}
+                                                value={latitude}
+                                                onChangeText={setLatitude}
+                                                keyboardType="numeric"
+                                            />
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[typography.textStyles.label, { fontSize: 14, marginBottom: spacing.xs }]}>
+                                                Longitude
+                                            </Text>
+                                            <TextInput
+                                                style={layout.input}
+                                                placeholder="-74.0060"
+                                                placeholderTextColor={colors.text.tertiary}
+                                                value={longitude}
+                                                onChangeText={setLongitude}
+                                                keyboardType="numeric"
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
                             </>
                         )}
                         
