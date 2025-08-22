@@ -11,7 +11,7 @@ PORT=5000
 NODE_ENV=development
 
 # Database Configuration
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/rentalease?retryWrites=true&w=majority
+MONGODB_URI=your_mongodb_atlas_connection_string_here
 
 # JWT Configuration (CRITICAL - Generate a strong secret!)
 JWT_SECRET=your_super_secret_jwt_key_here_make_it_at_least_32_characters_long
