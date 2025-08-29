@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     user: null,
     token: null,
+    refreshToken: null,
     status: 'idle',
     error: null,
     bootstrapped: false,
@@ -20,6 +21,7 @@ const authSlice = createSlice({
             state.status = 'succeeded';
             state.token = action.payload.token;
             state.user = action.payload.user;
+            state.refreshToken = action.payload.refreshToken;
             //clear error
             state.error = null;
         },
@@ -27,12 +29,14 @@ const authSlice = createSlice({
             state.status = 'failed';
             state.user = null;
             state.error = action.payload;
-            //clear token
+            //clear token and refresh token
             state.token = null;
+            state.refreshToken = null;
         },
         logout: (state) => {
             state.user = null;
             state.token = null;
+            state.refreshToken = null;
             state.status = 'idle';
             //clear error
             state.error = null;
@@ -45,6 +49,7 @@ const authSlice = createSlice({
             state.status = 'succeeded';
             state.token = action.payload.token;
             state.user = action.payload.user;
+            state.refreshToken = action.payload.refreshToken;
             //clear error
             state.error = null;
         },
@@ -52,8 +57,9 @@ const authSlice = createSlice({
             state.status = 'failed';
             state.user = null;
             state.error = action.payload;
-            //clear token
+            //clear token and refresh token
             state.token = null;
+            state.refreshToken = null;
         },
         bootstrapDone: (state) =>{
             state.bootstrapped = true;

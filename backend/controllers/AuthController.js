@@ -19,6 +19,10 @@ exports.register = async (req, res) => {
         await newUser.save();
         ///generate token
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const refreshToken = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        newUser.refreshToken = refreshToken;
+        newUser.refreshTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
+        await newUser.save();
         ///send welcome email
         try{
             await Promise.all([
@@ -38,6 +42,7 @@ exports.register = async (req, res) => {
                 email: newUser.email,
             },
             token,
+            refreshToken
         });
     }
     catch(error){
@@ -68,6 +73,10 @@ exports.login = async (req, res) => {
             });
         }
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        user.refreshToken = refreshToken;
+        user.refreshTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
+        await user.save();
         res.status(200).json({ 
             success: true,
             message: "Login successful", 
@@ -76,7 +85,8 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
             },
-            token 
+            token,
+            refreshToken
         });
     }
     catch(error){
@@ -195,3 +205,61 @@ exports.verifyEmail = async (req, res) => {
         });
     }
 };
+
+exports.logout = async (req, res) => {
+
+    //clear refresh token from user
+    const { refreshToken } = req.body;
+    try{
+        const user = await User.findOne({ refreshToken });
+        user.refreshToken = null;
+        user.refreshTokenExpires = null;
+        await user.save();
+    }
+    catch(error){
+        res.status(500).json({
+            success: false,
+            message: "Error logging out",
+            error: error.message
+        });
+    }
+    res.status(200).json({
+        success: true,
+        message: "Logged out successfully"
+    });
+}
+
+exports.refreshToken = async (req, res) => {
+    //validate refresh token, generate new access token
+    const { refreshToken } = req.body;
+    try{
+        const user = await User.findOne({ refreshToken });
+        if(!user){
+            return res.status(401).json({
+                success: false,
+                message: "Invalid refresh token"
+            });
+        }
+        if(user.refreshTokenExpires < Date.now()){
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token expired"
+            });
+        }
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        res.status(200).json({
+            success: true,
+            message: "Token refreshed successfully",
+            token
+        });
+    }
+    catch(error){
+        res.status(500).json({
+            success: false,
+            message: "Error refreshing token",
+            error: error.message
+        });
+    }
+}
+
+

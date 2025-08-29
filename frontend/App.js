@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginSuccess, logout, bootstrapDone, selectAuth } from './src/store/authSlice';
-import { setAuthToken, clearAuthToken, registerOnUnauthorized } from './src/api/client';
+import { setAuthToken, clearAuthToken, registerOnUnauthorized, setRefreshToken, refreshResetToken } from './src/api/client';
 import { View, Text, Linking } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -40,21 +40,25 @@ function AppShell(){
   const {bootstrapped} = useAppSelector(selectAuth);
   useEffect(() =>{
     registerOnUnauthorized(async () => {
+      // Clear everything and logout
       clearAuthToken();
       dispatch(logout());
-      await AsyncStorage.multiRemove(['@token', '@user']);
+      await AsyncStorage.multiRemove(['@token', '@user', '@refreshToken']);
+      refreshResetToken();
     });
   }, [dispatch]);
 
   useEffect(() =>{
     (async () => {
-      const entries = await AsyncStorage.multiGet(['@token', '@user']);
+      const entries = await AsyncStorage.multiGet(['@token', '@user', '@refreshToken']);
       const map= Object.fromEntries(entries);
       const token = map['@token'];
       const user = map['@user'];
-      if(token){
+      const refreshToken = map['@refreshToken'];
+      if(token && refreshToken){
         setAuthToken(token);
-        dispatch(loginSuccess({user: user ? JSON.parse(user) : null, token}));
+        setRefreshToken(refreshToken);
+        dispatch(loginSuccess({user: user ? JSON.parse(user) : null, token, refreshToken}));
       }
       dispatch(bootstrapDone());
     })();
