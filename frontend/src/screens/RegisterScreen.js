@@ -111,13 +111,14 @@ export default function RegisterScreen() {
                 phone: phone.replace(/\s/g, ''),
                 address: address.trim(),
             });
-            const {token, user} = response.data;
+            const {token, user, refreshToken} = response.data;
             await AsyncStorage.multiSet([
                 ['@token', token],
+                ['@refreshToken', refreshToken],
                 ['@user', JSON.stringify(user)]
             ]);
             setAuthToken(token);
-            dispatch(registerSuccess({user, token}));
+            dispatch(registerSuccess({user, token, refreshToken}));
             navigation.navigate('Home');   
         }
         catch(error){

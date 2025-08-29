@@ -70,12 +70,24 @@ const userSchema = new mongoose.Schema({
     emailVerificationExpires: {
         type: Date,
     },
+    refreshToken: {
+        type: String,
+        default: null,
+    },
+    refreshTokenExpires: {
+        type: Date,
+    },
 }, {timestamps: true});
 
 // Add database indexes for performance
 userSchema.index({ email: 1 });
 // userSchema.index({ role: 1 });
 userSchema.index({ phone: 1 });
+
+//method to validate refresh token
+userSchema.methods.validateRefreshToken = function(refreshToken) {
+    return bcrypt.compare(refreshToken, this.refreshToken);
+};
 
 //hash password before saving
 userSchema.pre("save", async function(next) {

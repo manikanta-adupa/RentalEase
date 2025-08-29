@@ -25,15 +25,16 @@ export default function LoginScreen() {
         dispatch(loginStart());
         try {
             const res = await client.post('/auth/login', { email, password });
-            const { token, user } = res.data;
+            const { token, user, refreshToken } = res.data;
             
             await AsyncStorage.multiSet([
                 ['@token', token],
+                ['@refreshToken', refreshToken],
                 ['@user', JSON.stringify(user)]
             ]);
             
             setAuthToken(token);
-            dispatch(loginSuccess({ user, token }));
+            dispatch(loginSuccess({ user, token, refreshToken }));
             navigation.navigate('Home');
         } catch (error) {
             const message = error?.response?.data?.message || "Login failed";
