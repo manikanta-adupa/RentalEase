@@ -1,13 +1,4 @@
 import React from 'react';
-<<<<<<< HEAD
-import { View, Text, FlatList, TextInput, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, TouchableHighlight, Modal } from 'react-native';
-import { colors, typography, spacing, layout } from '../styles';
-import Footer from '../components/Footer';
-import { useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Calendar } from 'react-native-calendars';
-=======
 import { View, Text, FlatList, TextInput, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, TouchableHighlight, Modal, ActivityIndicator } from 'react-native';
 import { colors, typography, spacing, layout } from '../styles';
 import Footer from '../components/Footer';
@@ -18,7 +9,6 @@ import { Calendar } from 'react-native-calendars';
 import useCreateProperty from '../hooks/createProperty';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '../store/authSlice';
->>>>>>> feature/addPropery
 
 export default function AddPropertyScreen() {
     const [title, setTitle] = useState('');
@@ -41,8 +31,6 @@ export default function AddPropertyScreen() {
     const [availableFrom, setAvailableFrom] = useState('');
     const [amenities, setAmenities] = useState([]);
     const [amenityInput, setAmenityInput] = useState('');
-<<<<<<< HEAD
-=======
 
     const [errors, setErrors] = useState({});
     const [showErrors, setShowErrors] = useState(false);
@@ -130,7 +118,6 @@ export default function AddPropertyScreen() {
         setShowErrors(true);
         return Object.keys(errors).length === 0;
     };
->>>>>>> feature/addPropery
     
     // Dropdown states
     const [propertyTypeOpen, setPropertyTypeOpen] = useState(false);
@@ -206,18 +193,6 @@ export default function AddPropertyScreen() {
         }
     };
 
-<<<<<<< HEAD
-    // Handle form submission
-    const handleSubmit = () => {
-        // TODO: Implement form submission logic
-        console.log('Form submitted with:', {
-            title, description, propertyType, furnishingStatus, address, city, state, postalCode,
-            latitude, longitude, monthlyRent, securityDeposit, maintenanceFee, bedRooms, bathRooms,
-            area, floor, availableFrom, amenities
-        });
-        Alert.alert('Success', 'Property form submitted! (Backend integration coming soon)');
-    };
-=======
     const isAuthenticated = useSelector(selectIsAuthenticated);
     if (!isAuthenticated) {
         Alert.alert('Error', 'You must be logged in to create a property');
@@ -288,7 +263,6 @@ export default function AddPropertyScreen() {
             Alert.alert('Error: ', error.message || 'Failed to submit.');
         }
     }, [error]);
->>>>>>> feature/addPropery
 
     // Render form section
     const renderFormSection = ({ item }) => {
@@ -329,9 +303,6 @@ export default function AddPropertyScreen() {
                                         Property Title
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.title && { 
@@ -339,20 +310,16 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter property title"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={title}
                                         onChangeText={setTitle}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.title && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.title}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -360,9 +327,6 @@ export default function AddPropertyScreen() {
                                         Description
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={[layout.input, { height: 80, textAlignVertical: 'top' }]}
-=======
                                         style={[
                                             layout.input, 
                                             { height: 80, textAlignVertical: 'top' },
@@ -371,7 +335,6 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Describe your property..."
                                         placeholderTextColor={colors.text.tertiary}
                                         value={description}
@@ -379,25 +342,18 @@ export default function AddPropertyScreen() {
                                         multiline
                                         numberOfLines={3}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.description && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.description}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
                                     <Text style={typography.textStyles.label}>
                                         Property Type
                                     </Text>
-<<<<<<< HEAD
-                                    <DropDownPicker
-=======
                                                                             <DropDownPicker
->>>>>>> feature/addPropery
                                         open={propertyTypeOpen}
                                         value={propertyType}
                                         items={propertyTypeOptions.map(type => ({
@@ -407,13 +363,6 @@ export default function AddPropertyScreen() {
                                         setOpen={setPropertyTypeOpen}
                                         onOpen={() => setFurnishingOpen(false)}
                                         setValue={setPropertyType}
-<<<<<<< HEAD
-                                        style={layout.input}
-                                        dropDownContainerStyle={{
-                                            borderColor: colors.border.light,
-                                            borderWidth: 2,
-                                            backgroundColor: colors.neutral[50],
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.propertyType && { 
@@ -425,7 +374,6 @@ export default function AddPropertyScreen() {
                                             borderColor: showErrors && errors.propertyType ? colors.error.main : colors.border.light,
                                             borderWidth: 2,
                                             backgroundColor: showErrors && errors.propertyType ? colors.error.light : colors.neutral[50],
->>>>>>> feature/addPropery
                                             shadowColor: colors.shadow,
                                             shadowOffset: { width: 0, height: 2 },
                                             shadowOpacity: 0.1,
@@ -441,25 +389,18 @@ export default function AddPropertyScreen() {
                                             nestedScrollEnabled: true,
                                         }}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.propertyType && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.propertyType}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
                                     <Text style={typography.textStyles.label}>
                                         Furnishing Status
                                     </Text>
-<<<<<<< HEAD
-                                    <DropDownPicker
-=======
                                                                             <DropDownPicker
->>>>>>> feature/addPropery
                                         open={furnishingOpen}
                                         value={furnishingStatus}
                                         items={furnishingOptions.map(status => ({
@@ -469,13 +410,6 @@ export default function AddPropertyScreen() {
                                         setOpen={setFurnishingOpen}
                                         onOpen={() => setPropertyTypeOpen(false)}
                                         setValue={setFurnishingStatus}
-<<<<<<< HEAD
-                                        style={layout.input}
-                                        dropDownContainerStyle={{
-                                            borderColor: colors.border.light,
-                                            borderWidth: 2,
-                                            backgroundColor: colors.neutral[50],
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.furnishingStatus && { 
@@ -487,7 +421,6 @@ export default function AddPropertyScreen() {
                                             borderColor: showErrors && errors.furnishingStatus ? colors.error.main : colors.border.light,
                                             borderWidth: 2,
                                             backgroundColor: showErrors && errors.furnishingStatus ? colors.error.light : colors.neutral[50],
->>>>>>> feature/addPropery
                                             shadowColor: colors.shadow,
                                             shadowOffset: { width: 0, height: 2 },
                                             shadowOpacity: 0.1,
@@ -503,14 +436,11 @@ export default function AddPropertyScreen() {
                                             nestedScrollEnabled: true,
                                         }}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.furnishingStatus && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.furnishingStatus}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -518,20 +448,6 @@ export default function AddPropertyScreen() {
                                         Available From
                                     </Text>
                                     <TouchableOpacity 
-<<<<<<< HEAD
-                                        style={[layout.input, { 
-                                            backgroundColor: availableFrom ? colors.primary.background : colors.neutral[50],
-                                            borderColor: availableFrom ? colors.primary.main : colors.border.light,
-                                            borderWidth: 2,
-                                            shadowColor: availableFrom ? colors.primary.main : colors.shadow,
-                                            shadowOffset: { width: 0, height: availableFrom ? 2 : 1 },
-                                            shadowOpacity: availableFrom ? 0.1 : 0.05,
-                                            shadowRadius: availableFrom ? 4 : 2,
-                                            elevation: availableFrom ? 4 : 2,
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }]}
-=======
                                         style={[
                                             layout.input, 
                                             { 
@@ -547,7 +463,6 @@ export default function AddPropertyScreen() {
                                                 alignItems: 'center'
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         onPress={() => setShowDatePicker(true)}
                                         activeOpacity={0.7}
                                     >
@@ -627,14 +542,11 @@ export default function AddPropertyScreen() {
                                             </Text>
                                         </View>
                                     )}
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.availableFrom && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.availableFrom}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
                             </>
                         )}
@@ -646,9 +558,6 @@ export default function AddPropertyScreen() {
                                         Address
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.address && { 
@@ -656,20 +565,16 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter full address"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={address}
                                         onChangeText={setAddress}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.address && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.address}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -677,9 +582,6 @@ export default function AddPropertyScreen() {
                                         City
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.city && { 
@@ -687,20 +589,16 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter city"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={city}
                                         onChangeText={setCity}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.city && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.city}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -708,9 +606,6 @@ export default function AddPropertyScreen() {
                                         State
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.state && { 
@@ -718,20 +613,16 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter state"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={state}
                                         onChangeText={setState}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.state && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.state}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -739,9 +630,6 @@ export default function AddPropertyScreen() {
                                         Postal Code
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.postalCode && { 
@@ -749,20 +637,16 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter postal code"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={postalCode}
                                         onChangeText={setPostalCode}
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.postalCode && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.postalCode}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -781,9 +665,6 @@ export default function AddPropertyScreen() {
                                                 Latitude
                                             </Text>
                                             <TextInput
-<<<<<<< HEAD
-                                                style={layout.input}
-=======
                                                 style={[
                                                     layout.input,
                                                     showErrors && errors.latitude && { 
@@ -791,30 +672,23 @@ export default function AddPropertyScreen() {
                                                         backgroundColor: colors.error.light 
                                                     }
                                                 ]}
->>>>>>> feature/addPropery
                                                 placeholder="40.7128"
                                                 placeholderTextColor={colors.text.tertiary}
                                                 value={latitude}
                                                 onChangeText={setLatitude}
                                                 keyboardType="numeric"
                                             />
-<<<<<<< HEAD
-=======
                                             {showErrors && errors.latitude && (
                                                 <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                                     {errors.latitude}
                                                 </Text>
                                             )}
->>>>>>> feature/addPropery
                                         </View>
                                         <View style={{ flex: 1 }}>
                                             <Text style={[typography.textStyles.label, { fontSize: 14, marginBottom: spacing.xs }]}>
                                                 Longitude
                                             </Text>
                                             <TextInput
-<<<<<<< HEAD
-                                                style={layout.input}
-=======
                                                 style={[
                                                     layout.input,
                                                     showErrors && errors.longitude && { 
@@ -822,17 +696,12 @@ export default function AddPropertyScreen() {
                                                         backgroundColor: colors.error.light 
                                                     }
                                                 ]}
->>>>>>> feature/addPropery
                                                 placeholder="-74.0060"
                                                 placeholderTextColor={colors.text.tertiary}
                                                 value={longitude}
                                                 onChangeText={setLongitude}
                                                 keyboardType="numeric"
                                             />
-<<<<<<< HEAD
-                                        </View>
-                                    </View>
-=======
                                             {showErrors && errors.longitude && (
                                                 <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                                     {errors.longitude}
@@ -841,7 +710,6 @@ export default function AddPropertyScreen() {
                                         </View>
                                     </View>
                                     
->>>>>>> feature/addPropery
                                 </View>
                             </>
                         )}
@@ -853,9 +721,6 @@ export default function AddPropertyScreen() {
                                         Monthly Rent
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.monthlyRent && { 
@@ -863,21 +728,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter monthly rent amount"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={monthlyRent}
                                         onChangeText={setMonthlyRent}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.monthlyRent && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.monthlyRent}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -885,9 +746,6 @@ export default function AddPropertyScreen() {
                                         Security Deposit
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.securityDeposit && { 
@@ -895,21 +753,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter security deposit amount"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={securityDeposit}
                                         onChangeText={setSecurityDeposit}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.securityDeposit && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.securityDeposit}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -917,9 +771,6 @@ export default function AddPropertyScreen() {
                                         Maintenance Fee
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.maintenanceFee && { 
@@ -927,21 +778,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Enter maintenance fee (optional)"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={maintenanceFee}
                                         onChangeText={setMaintenanceFee}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.maintenanceFee && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.maintenanceFee}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -949,9 +796,6 @@ export default function AddPropertyScreen() {
                                         Bedrooms
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.bedRooms && { 
@@ -959,21 +803,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Number of bedrooms"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={bedRooms}
                                         onChangeText={setBedRooms}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.bedRooms && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.bedRooms}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -981,9 +821,6 @@ export default function AddPropertyScreen() {
                                         Bathrooms
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.bathRooms && { 
@@ -991,21 +828,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Number of bathrooms"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={bathRooms}
                                         onChangeText={setBathRooms}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.bathRooms && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.bathRooms}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -1013,9 +846,6 @@ export default function AddPropertyScreen() {
                                         Area (sq ft)
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.area && { 
@@ -1023,21 +853,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Property area in square feet"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={area}
                                         onChangeText={setArea}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.area && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.area}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
 
                                 <View style={layout.inputGroup}>
@@ -1045,9 +871,6 @@ export default function AddPropertyScreen() {
                                         Floor
                                     </Text>
                                     <TextInput
-<<<<<<< HEAD
-                                        style={layout.input}
-=======
                                         style={[
                                             layout.input,
                                             showErrors && errors.floor && { 
@@ -1055,21 +878,17 @@ export default function AddPropertyScreen() {
                                                 backgroundColor: colors.error.light 
                                             }
                                         ]}
->>>>>>> feature/addPropery
                                         placeholder="Floor number (optional)"
                                         placeholderTextColor={colors.text.tertiary}
                                         value={floor}
                                         onChangeText={setFloor}
                                         keyboardType="numeric"
                                     />
-<<<<<<< HEAD
-=======
                                     {showErrors && errors.floor && (
                                         <Text style={{ color: colors.error.main, fontSize: 12, marginTop: spacing.xs }}>
                                             {errors.floor}
                                         </Text>
                                     )}
->>>>>>> feature/addPropery
                                 </View>
                             </>
                         )}
@@ -1136,19 +955,6 @@ export default function AddPropertyScreen() {
                                             ))}
                                         </View>
                                     )}
-<<<<<<< HEAD
-                                </View>
-
-                                <TouchableOpacity 
-                                    style={[layout.buttonPrimary, { 
-                                        marginTop: spacing.lg,
-                                        width: '100%'
-                                    }]}
-                                    onPress={handleSubmit}
-                                >
-                                    <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
-                                        Submit Property
-=======
 
                                 </View>
 
@@ -1166,7 +972,6 @@ export default function AddPropertyScreen() {
                                 >
                                     <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
                                         {isLoading ? <ActivityIndicator size="small" color={colors.text.inverse} /> : isSuccess ? 'Property submitted' : 'Submit Property'}
->>>>>>> feature/addPropery
                                     </Text>
                                 </TouchableOpacity>
                             </>
