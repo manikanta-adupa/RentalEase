@@ -147,7 +147,8 @@ export default function PropertyListScreen() {
                     <TouchableOpacity
                         style={layout.cardProperty}
                         onPress={() => {
-                            // navigation.navigate('PropertyDetails', { propertyId: item._id || item.id });
+                            navigation.navigate('PropertyDetail', { propertyId: item._id || item.id });
+
                         }}
                         activeOpacity={0.7}
                     >
