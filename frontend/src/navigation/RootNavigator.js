@@ -8,6 +8,7 @@ import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AddPropertyScreen from '../screens/AddPropertyScreen';
+import PropertyDetailScreen from '../screens/PropertyDetailScreen';
 import MyProfileScreen from '../screens/MyProfileScreen';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ export default function RootNavigator() {
             <Stack.Screen name="Register" component={RegisterScreen} /> 
             <Stack.Screen name="AddProperty" component={AddPropertyScreen} />
             <Stack.Screen name="MyProfile" component={MyProfileScreen} />
+            <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />
         </Stack.Navigator>
     );
 }
