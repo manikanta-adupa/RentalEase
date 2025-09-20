@@ -1,4 +1,5 @@
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import useProperties from '../hooks/useProperties';
 import { colors, typography, spacing, layout } from '../styles';

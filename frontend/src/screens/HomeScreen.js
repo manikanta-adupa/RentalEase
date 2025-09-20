@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, selectAuth, selectIsAuthenticated } from '../store/authSlice';
 import { clearAuthToken } from '../api/client';

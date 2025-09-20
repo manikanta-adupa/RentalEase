@@ -1,4 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, StatusBar, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerStart, registerSuccess, registerFailure, selectAuth } from "../store/authSlice";
