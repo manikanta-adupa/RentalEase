@@ -9,6 +9,7 @@ import { Calendar } from 'react-native-calendars';
 import useCreateProperty from '../hooks/createProperty';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '../store/authSlice';
+import ImagePicker from 'expo-image-picker';
 
 export default function AddPropertyScreen() {
     const [title, setTitle] = useState('');
@@ -31,6 +32,28 @@ export default function AddPropertyScreen() {
     const [availableFrom, setAvailableFrom] = useState('');
     const [amenities, setAmenities] = useState([]);
     const [amenityInput, setAmenityInput] = useState('');
+    const [images, setImages] = useState([]);
+
+    const pickImage = async () => {
+        const {granted} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!granted) {
+            Alert.alert('Error', 'Permission to access media library was denied');
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+        });
+
+        if (!result.canceled) {
+            setImages([...images, result.assets[0].uri]);
+        }
+        // console.log(images);
+        useEffect(() => {
+            console.log(images);
+        }, [images]);
+
+    }
 
     const [errors, setErrors] = useState({});
     const [showErrors, setShowErrors] = useState(false);
@@ -154,6 +177,11 @@ export default function AddPropertyScreen() {
             subtitle: 'List your property for rent'
         },
         {
+            id: 'images',
+            type: 'section',
+            title: 'Images'
+        },
+        {
             id: 'basic',
             type: 'section',
             title: 'Basic Details'
@@ -204,30 +232,53 @@ export default function AddPropertyScreen() {
             return;
         }
         
-        // TODO: Implement form submission logic
-        createProperty({
-            title, 
-            description, 
-            propertyType, 
-            furnishingStatus, 
-            address, 
-            city, 
-            state, 
-            postalCode,
-            coordinates: {  
-                latitude: parseFloat(latitude) || undefined,
-                longitude: parseFloat(longitude) || undefined
-            },
-            monthlyRent: parseFloat(monthlyRent),  
-            securityDeposit: parseFloat(securityDeposit),  
-            maintenanceFee: parseFloat(maintenanceFee) || undefined,  
-            bedRooms: parseInt(bedRooms),  
-            bathRooms: parseInt(bathRooms),  
-            area: parseFloat(area),  
-            floor: parseInt(floor) || undefined,  
-            availableFrom, 
-            amenities
-        });
+        const formData = new FormData();
+
+        // Append all text and simple numeric fields
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('propertyType', propertyType);
+        formData.append('furnishingStatus', furnishingStatus);
+        formData.append('address', address);
+        formData.append('city', city);
+        formData.append('state', state);
+        formData.append('postalCode', postalCode);
+        formData.append('monthlyRent', monthlyRent);
+        formData.append('securityDeposit', securityDeposit);
+        formData.append('bedRooms', bedRooms);
+        formData.append('bathRooms', bathRooms);
+        formData.append('area', area);
+
+        // Handle optional fields
+        if (maintenanceFee) formData.append('maintenanceFee', maintenanceFee);
+        if (floor) formData.append('floor', floor);
+        if (availableFrom) formData.append('availableFrom', availableFrom);
+
+        // Handle nested coordinates object
+        if (latitude && longitude) {
+            formData.append('coordinates[latitude]', latitude);
+            formData.append('coordinates[longitude]', longitude);
+        }
+
+        // Handle amenities array
+        if (amenities.length > 0) {
+            amenities.forEach(amenity => {
+                formData.append('amenities[]', amenity);
+            });
+        }
+
+        // Handle images array
+        if (images.length > 0) {
+            images.forEach((uri, index) => {
+                formData.append('images', {
+                    uri: uri,
+                    name: `property-image-${index}.jpg`,
+                    type: 'image/jpeg',
+                });
+            });
+        }
+        
+        createProperty(formData);
     };
     //useEffect to show success or error message after submission
     useEffect(() => {
@@ -283,7 +334,33 @@ export default function AddPropertyScreen() {
                         </Text>
                     </View>
                 );
-            
+            case 'images':
+                return (
+                    <View style={layout.cardLarge}>
+                        <Text style={[typography.textStyles.h3, { color: colors.text.primary, textAlign: 'center', marginBottom: spacing.xl }]}>
+                            {item.title}
+                        </Text>
+                        <TouchableOpacity
+                            style={[layout.buttonPrimary, { paddingHorizontal: spacing.md }]}
+                            onPress={pickImage}
+                        >
+                            <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
+                                Pick Image
+                            </Text>
+                        </TouchableOpacity>
+                        <FlatList
+                            data={images}
+                            renderItem={({ item }) => (
+                                <Image source={{ uri: item }} style={layout.image} />
+                            )}
+                            keyExtractor={(item, index) => index.toString()}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ gap: spacing.md }}
+                            style={{ marginTop: spacing.xl }}
+                        />
+                    </View>
+                );
             case 'section':
                 return (
                     <View style={layout.cardLarge}>

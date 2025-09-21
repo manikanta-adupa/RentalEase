@@ -55,7 +55,7 @@ exports.createProperty = async (req, res) => {
             amenities,
             owner: req.user._id,
         };
-        const newProperty = new Property(propertyData);
+        const newProperty = new Property({...propertyData, images: []});
         await newProperty.save();
 
         res.status(201).json({
