@@ -122,6 +122,14 @@ const propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
+        validate: {
+            validator: async function(value) {
+                const User = mongoose.model('User');
+                const user = await User.findById(value);
+                return !!user;
+            },
+            message: 'Owner must reference a valid user'
+        }
     },
     //property status
     isAvailable: {

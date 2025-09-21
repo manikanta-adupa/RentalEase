@@ -124,4 +124,31 @@ userSchema.methods.generateEmailVerificationToken = function() {
     return this.emailVerificationToken;
 };  
 
+// CASCADE DELETE: When a user is deleted, delete all their properties
+userSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+    try {
+        const Property = mongoose.model('Property');
+        await Property.deleteMany({ owner: this._id });
+        console.log(`Deleted all properties for user: ${this._id}`);
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Also handle findOneAndDelete
+userSchema.pre('findOneAndDelete', async function(next) {
+    try {
+        const user = await this.model.findOne(this.getQuery());
+        if (user) {
+            const Property = mongoose.model('Property');
+            await Property.deleteMany({ owner: user._id });
+            console.log(`Deleted all properties for user: ${user._id}`);
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = mongoose.model("User", userSchema);
