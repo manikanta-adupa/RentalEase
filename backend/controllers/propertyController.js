@@ -242,12 +242,12 @@ exports.getPropertyById = async (req, res) => {
             success: true,
             message: "Property fetched successfully",
             property: propertyDetails,
-            owner: {
+            owner: property.owner ? {
                 _id: property.owner._id,
                 name: property.owner.name,
                 phone: property.owner.phone,
                 email: property.owner.email,
-            },
+            } : null,
         });
     } catch (error) {
         res.status(500).json({
