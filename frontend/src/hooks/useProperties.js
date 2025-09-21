@@ -15,8 +15,8 @@ export default function useProperties() {
             success: data.success,
         }),
         //options   
-        staleTime: 5 * 60 * 1000,//5 minutes
-        gcTime: 20 * 60 * 1000,//20 minutes
+        staleTime: 5 * 60 * 1000,
+        gcTime: 20 * 60 * 1000,
         refetchOnWindowFocus: true,
         refetchOnMount: true,
         retry: 3,

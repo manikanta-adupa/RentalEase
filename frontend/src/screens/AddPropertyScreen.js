@@ -269,9 +269,8 @@ export default function AddPropertyScreen() {
         switch (item.type) {
             case 'header':
                 return (
-                    <View style={[layout.headerCentered, { paddingTop: spacing.xl }]}>
-                        <Text style={{ fontSize: typography.fontSize['5xl'], marginBottom: spacing.md }}>🏠</Text>
-                        <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center' }]}>
+                    <View style={[layout.headerCentered, { paddingTop: spacing.xl, paddingHorizontal: spacing.md }]}>
+                        <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center', width: '100%' }]}>
                             {item.title}
                         </Text>
                         <Text style={[typography.textStyles.body, { 

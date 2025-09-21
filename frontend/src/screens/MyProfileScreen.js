@@ -15,7 +15,7 @@ export default function MyProfileScreen() {
             <ScrollView style={layout.scrollContainer} contentContainerStyle={layout.scrollContent}>
                 {/* Header */}
                 <View style={layout.headerCentered}>
-                    <Text style={[typography.textStyles.h2, { color: colors.text.inverse, textAlign: 'center' }]}>
+                    <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center' }]}>
                         My Profile
                     </Text>
                     <Text style={[typography.textStyles.body, { 

@@ -19,7 +19,7 @@ export default function PropertyListScreen() {
                 
                 {/* Header */}
                 <View style={layout.header}>
-                    <Text style={[typography.textStyles.h3, { color: colors.text.inverse, textAlign: 'center' }]}>
+                    <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center' }]}>
                         Available Properties
                     </Text>
                 </View>
@@ -87,7 +87,7 @@ export default function PropertyListScreen() {
                 
                 {/* Header */}
                 <View style={layout.header}>
-                    <Text style={[typography.textStyles.h3, { color: colors.text.inverse, textAlign: 'center' }]}>
+                    <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center' }]}>
                         Available Properties
                     </Text>
                 </View>
@@ -123,7 +123,7 @@ export default function PropertyListScreen() {
             
             {/* Header */}
             <View style={layout.header}>
-                <Text style={[typography.textStyles.h3, { color: colors.text.inverse, textAlign: 'center' }]}>
+                <Text style={[typography.textStyles.h1, { color: colors.text.inverse, textAlign: 'center' }]}>
                     Available Properties
                 </Text>
                 <Text style={[typography.textStyles.bodySmall, { 
