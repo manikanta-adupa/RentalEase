@@ -54,6 +54,38 @@ const uploadImages = multer({
     fileFilter: imageFilter,
 });
 
+const handleMulterError = (err, res) => {
+    if (err instanceof multer.MulterError) {
+        switch (err.code) {
+            case 'LIMIT_FILE_SIZE':
+                return res.status(400).json({ success: false, message: 'File too large. Maximum 5MB allowed.', code: 'FILE_TOO_LARGE' });
+            case 'LIMIT_FILE_COUNT':
+                return res.status(400).json({ success: false, message: 'Too many files. Maximum 5 images allowed.', code: 'TOO_MANY_FILES' });
+            case 'LIMIT_UNEXPECTED_FILE':
+                return res.status(400).json({ success: false, message: `Unexpected file field. Expected 'images'.`, code: 'UNEXPECTED_FIELD' });
+            default:
+                return res.status(400).json({ success: false, message: `Upload error: ${err.message}`, code: 'UPLOAD_ERROR' });
+        }
+    } else if (err) {
+        // Handle custom filter errors or other errors
+        return res.status(400).json({ success: false, message: err.message, code: 'INVALID_FILE_TYPE' });
+    }
+    return null; // No error
+};
+
+
+const uploadPropertyImagesMiddleware = (req, res, next) => {
+    const uploader = uploadImages.array('images', 5);
+    uploader(req, res, function (err) {
+        const errorResponse = handleMulterError(err, res);
+        if (errorResponse) {
+            return; // Response already sent
+        }
+        // If no errors, proceed to the next middleware
+        next();
+    });
+};
+
 const uploadDocuments = multer({
     storage: storage,
     limits: {
@@ -175,7 +207,7 @@ const validateFileUpload = (minFiles = 0, maxFiles = 10, context = 'files') => {
 
 module.exports = {
     // Property images (images only, max 5)
-    uploadPropertyImages: uploadImages.array('images', 5),
+    uploadPropertyImages: uploadPropertyImagesMiddleware,
     
     // Property documents (PDFs + images, max 10)
     uploadPropertyDocuments: uploadDocuments.array('documents', 10),

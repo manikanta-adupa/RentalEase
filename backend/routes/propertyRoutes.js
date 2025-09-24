@@ -45,7 +45,7 @@ router.get("/search", searchProperties);
 router.get("/:id", validateObjectId('id'), getPropertyById);
 
 // Protected routes (authentication + role required)
-router.post("/", auth, uploadPropertyImagesMiddleware, handleUploadErrors, validatePropertyImages, validateProperty, createProperty);
+router.post("/", auth, uploadPropertyImagesMiddleware, validatePropertyImages, validateProperty, createProperty);
 router.put("/:id", validateObjectId('id'), auth, validateProperty, updateProperty);
 router.delete("/:id", validateObjectId('id'), auth, deleteProperty);
 
