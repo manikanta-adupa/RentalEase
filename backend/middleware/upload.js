@@ -75,8 +75,15 @@ const handleMulterError = (err, res) => {
 
 
 const uploadPropertyImagesMiddleware = (req, res, next) => {
+    console.log('📤 Upload middleware - processing files');
     const uploader = uploadImages.array('images', 5);
     uploader(req, res, function (err) {
+        if (err) {
+            console.error('📤 Upload middleware - error:', err.message);
+        } else {
+            console.log('📤 Upload middleware - success, files:', req.files ? req.files.length : 0);
+        }
+        
         const errorResponse = handleMulterError(err, res);
         if (errorResponse) {
             return; // Response already sent
@@ -181,10 +188,14 @@ const handleUploadErrors = (error, req, res, next) => {
 // Validation middleware for file requirements
 const validateFileUpload = (minFiles = 0, maxFiles = 10, context = 'files') => {
     return (req, res, next) => {
+        console.log(`✅ Validate ${context} - min: ${minFiles}, max: ${maxFiles}`);
         const files = req.files;
+        const fileCount = files ? files.length : 0;
+        console.log(`✅ Validate ${context} - received: ${fileCount} files`);
         
         if (!files || files.length === 0) {
             if (minFiles > 0) {
+                console.log(`❌ Validate ${context} - insufficient files: need ${minFiles}, got ${fileCount}`);
                 return res.status(400).json({
                     success: false,
                     message: `At least ${minFiles} ${context} required.`,
@@ -194,6 +205,7 @@ const validateFileUpload = (minFiles = 0, maxFiles = 10, context = 'files') => {
         }
         
         if (files && files.length > maxFiles) {
+            console.log(`❌ Validate ${context} - too many files: max ${maxFiles}, got ${fileCount}`);
             return res.status(400).json({
                 success: false,
                 message: `Maximum ${maxFiles} ${context} allowed.`,
@@ -201,6 +213,7 @@ const validateFileUpload = (minFiles = 0, maxFiles = 10, context = 'files') => {
             });
         }
         
+        console.log(`✅ Validate ${context} - passed validation`);
         next();
     };
 };

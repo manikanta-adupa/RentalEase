@@ -4,6 +4,11 @@ const { uploadPropertyImages } = require("../services/imageService");
 //create property
 exports.createProperty = async (req, res) => {
     try {
+        console.log('🏠 Property creation request received');
+        console.log('📋 Request body:', req.body);
+        console.log('📁 Request files:', req.files ? req.files.length : 'No files');
+        console.log('🔐 User ID:', req.user?._id);
+        
         const {
             title,
             description,
@@ -85,7 +90,12 @@ exports.createProperty = async (req, res) => {
             },
         });
     } catch (error) {
+        console.error('❌ Property creation error:', error);
+        console.error('❌ Error name:', error.name);
+        console.error('❌ Error message:', error.message);
+        
         if (error.name === 'ValidationError') {
+            console.error('❌ Validation errors:', Object.values(error.errors).map(err => err.message));
             return res.status(400).json({
                 success: false,
                 message: 'Validation failed',
