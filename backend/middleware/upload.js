@@ -230,7 +230,7 @@ module.exports = {
     
     // Validation helpers
     validateFileUpload,
-    validatePropertyImages: validateFileUpload(1, 5, 'images'),
+    validatePropertyImages: validateFileUpload(0, 5, 'images'),
     validatePropertyDocuments: validateFileUpload(0, 10, 'documents'),
     validateApplicationDocuments: validateFileUpload(1, 3, 'documents')
 };
