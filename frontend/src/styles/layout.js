@@ -22,6 +22,7 @@ export const layout = StyleSheet.create({
 
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: spacing.xxl
   },
 
   centeredContainer: {
@@ -294,6 +295,53 @@ export const layout = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 8
+    },
+    addImageButton: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: colors.primary.main,
+        borderStyle: 'dashed',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primary.background,
+    },
+    addImageText: {
+        ...typography.textStyles.caption,
+        color: colors.primary.main,
+        marginTop: spacing.xs,
+    },
+    imageContainer: {
+        position: 'relative',
+    },
+    thumbnail: {
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+    },
+    removeImageButton: {
+        position: 'absolute',
+        top: -6,
+        right: -6,
+        backgroundColor: colors.error.main,
+        borderRadius: 15,
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        borderWidth: 2,
+        borderColor: colors.background.primary,
+    }
 });
 
 export default layout;

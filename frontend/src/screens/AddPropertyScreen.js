@@ -9,7 +9,7 @@ import { Calendar } from 'react-native-calendars';
 import useCreateProperty from '../hooks/createProperty';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated } from '../store/authSlice';
-import ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function AddPropertyScreen() {
     const [title, setTitle] = useState('');
@@ -34,26 +34,37 @@ export default function AddPropertyScreen() {
     const [amenityInput, setAmenityInput] = useState('');
     const [images, setImages] = useState([]);
 
+   
+
     const pickImage = async () => {
-        const {granted} = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!granted) {
-            Alert.alert('Error', 'Permission to access media library was denied');
-            return;
-        }
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true,
-        });
+        try {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to upload images!');
+                return;
+            }
 
-        if (!result.canceled) {
-            setImages([...images, result.assets[0].uri]);
-        }
-        // console.log(images);
-        useEffect(() => {
-            console.log(images);
-        }, [images]);
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 0.8,
+                allowsMultipleSelection: false,
+            });
 
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const imageUri = result.assets[0].uri;
+                setImages([...images, imageUri]);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to pick image. Please try again.');
+        }
     }
+
+    const removeImage = (indexToRemove) => {
+        setImages(images.filter((_, index) => index !== indexToRemove));
+    };
 
     const [errors, setErrors] = useState({});
     const [showErrors, setShowErrors] = useState(false);
@@ -178,7 +189,7 @@ export default function AddPropertyScreen() {
         },
         {
             id: 'images',
-            type: 'section',
+            type: 'images',
             title: 'Images'
         },
         {
@@ -337,27 +348,41 @@ export default function AddPropertyScreen() {
             case 'images':
                 return (
                     <View style={layout.cardLarge}>
-                        <Text style={[typography.textStyles.h3, { color: colors.text.primary, textAlign: 'center', marginBottom: spacing.xl }]}>
+                        <Text style={[typography.textStyles.h3, { color: colors.text.primary, textAlign: 'center', marginBottom: spacing.lg }]}>
                             {item.title}
                         </Text>
-                        <TouchableOpacity
-                            style={[layout.buttonPrimary, { paddingHorizontal: spacing.md }]}
-                            onPress={pickImage}
-                        >
-                            <Text style={[typography.textStyles.button, { color: colors.text.inverse }]}>
-                                Pick Image
-                            </Text>
-                        </TouchableOpacity>
+                        <Text style={[typography.textStyles.bodySmall, { color: colors.text.secondary, textAlign: 'center', marginBottom: spacing.xl }]}>
+                            Add up to 5 images. The first image will be the main cover photo.
+                        </Text>
                         <FlatList
-                            data={images}
-                            renderItem={({ item }) => (
-                                <Image source={{ uri: item }} style={layout.image} />
-                            )}
-                            keyExtractor={(item, index) => index.toString()}
                             horizontal
+                            data={images}
+                            keyExtractor={(item, index) => index.toString()}
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{ gap: spacing.md }}
-                            style={{ marginTop: spacing.xl }}
+                            renderItem={({ item, index }) => (
+                                <View style={layout.imageContainer}>
+                                    <Image source={{ uri: item }} style={layout.thumbnail} />
+                                    <TouchableOpacity
+                                        style={layout.removeImageButton}
+                                        onPress={() => removeImage(index)}
+                                    >
+                                        <Ionicons name="close" size={16} color={colors.text.inverse} />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            ListHeaderComponent={
+                                <TouchableOpacity
+                                    style={[layout.addImageButton, { marginRight: images.length > 0 ? spacing.md : 0 }]}
+                                    onPress={pickImage}
+                                    disabled={images.length >= 5}
+                                >
+                                    <Ionicons name="camera" size={24} color={images.length >= 5 ? colors.neutral[400] : colors.primary.main} />
+                                    <Text style={[layout.addImageText, images.length >= 5 && { color: colors.neutral[400] }]}>
+                                        Add Image
+                                    </Text>
+                                </TouchableOpacity>
+                            }
                         />
                     </View>
                 );

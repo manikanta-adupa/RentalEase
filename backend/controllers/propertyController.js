@@ -1,4 +1,5 @@
 const Property = require("../models/Property");
+const { uploadPropertyImages } = require("../services/imageService");
 
 //create property
 exports.createProperty = async (req, res) => {
@@ -55,7 +56,19 @@ exports.createProperty = async (req, res) => {
             amenities,
             owner: req.user._id,
         };
-        const newProperty = new Property({...propertyData, images: []});
+        const newProperty = new Property(propertyData);
+
+        if (req.files && req.files.length > 0) {
+            const imageUploadResult = await uploadPropertyImages(req.files, newProperty._id);
+            if (imageUploadResult.success && imageUploadResult.data) {
+                newProperty.images = imageUploadResult.data.map(img => img.secure_url);
+            } else {
+                console.error("Image upload failed:", imageUploadResult.message);
+                // Decide if you want to fail the whole property creation or not
+                // For now, we'll proceed without images but log the error
+            }
+        }
+        
         await newProperty.save();
 
         res.status(201).json({
