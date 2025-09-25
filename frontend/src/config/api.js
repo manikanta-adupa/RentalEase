@@ -7,11 +7,6 @@ const API_BASE_URL = 'https://rentalease-backend.onrender.com/api';
 // const API_ROOT = 'http://localhost:5000';
 const API_ROOT = 'https://rentalease-backend.onrender.com';
 
-// Debug: Log the API configuration
-console.log('🔍 API Configuration:');
-console.log('API_BASE_URL:', API_BASE_URL);
-console.log('API_ROOT:', API_ROOT);
-
 //ES module export
 export { API_BASE_URL, API_ROOT };
 
