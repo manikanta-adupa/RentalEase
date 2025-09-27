@@ -1,8 +1,22 @@
 // RentalEase Layout & Component Styles
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import colors from './colors';
 import typography from './typography';
 import spacing from './spacing';
+
+export const createCarouselStyles = (width) => {
+  return StyleSheet.create({
+    carouselImage: {
+      width: width * 0.9,
+      height: 250,
+      borderRadius: spacing.md,
+      marginHorizontal: spacing.sm,
+    },
+    carouselContainer: {
+      paddingHorizontal: spacing.sm,
+    },
+  });
+};
 
 export const layout = StyleSheet.create({
   // Container Styles
@@ -341,7 +355,56 @@ export const layout = StyleSheet.create({
         elevation: 5,
         borderWidth: 2,
         borderColor: colors.background.primary,
-    }
+    },
+
+  // Property Detail Screen Styles
+  sectionTitle: {
+    ...typography.textStyles.h3,
+    color: colors.text.primary,
+    marginBottom: spacing.lg,
+    textAlign: 'center',
+  },
+  description: {
+    ...typography.textStyles.body,
+    color: colors.text.secondary,
+    marginBottom: spacing.lg,
+    lineHeight: 24,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
+  },
+  detailLabel: {
+    ...typography.textStyles.label,
+    color: colors.text.secondary,
+  },
+  detailValue: {
+    ...typography.textStyles.body,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.text.primary,
+  },
+  amenitiesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  amenityPill: {
+    backgroundColor: colors.primary.background,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.primary.light,
+  },
+  amenityText: {
+    ...typography.textStyles.bodySmall,
+    color: colors.primary.main,
+    fontWeight: typography.fontWeight.medium,
+  },
 });
 
 export default layout;

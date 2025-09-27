@@ -1,5 +1,7 @@
 const Property = require("../models/Property");
 const { uploadPropertyImages } = require("../services/imageService");
+const mongoose = require("mongoose");
+const User = require("../models/User");
 
 //create property
 exports.createProperty = async (req, res) => {
@@ -218,57 +220,47 @@ exports.getAllProperties = async (req, res) => {
     }
 };
 
-//get property by id
+// Get a single property by ID
 exports.getPropertyById = async (req, res) => {
-    try {
-        const property = await Property.findById(req.params.id).populate("owner", "name phone email");
-        if (!property) {
-            return res.status(404).json({
-                success: false,
-                message: "Property not found",
-            });
-        }
-        //increment view count
-        property.numberOfViews += 1;
-        await property.save();
-        //get property details
-        const propertyDetails = {
-            _id: property._id,
-            title: property.title,
-            description: property.description,
-            propertyType: property.propertyType,
-            furnishingStatus: property.furnishingStatus,
-            address: property.address,
-            city: property.city,
-            state: property.state,
-            monthlyRent: property.monthlyRent,
-            securityDeposit: property.securityDeposit,
-            bedRooms: property.bedRooms,
-            bathRooms: property.bathRooms,
-            area: property.area,
-            amenities: property.amenities,
-            images: property.images,
-            numberOfViews: property.numberOfViews,
-            isAvailable: property.isAvailable,
-        };
-        res.status(200).json({
-            success: true,
-            message: "Property fetched successfully",
-            property: propertyDetails,
-            owner: property.owner ? {
-                _id: property.owner._id,
-                name: property.owner.name,
-                phone: property.owner.phone,
-                email: property.owner.email,
-            } : null,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Error fetching property",
-            error: error.message,
-        });
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
     }
+
+    let ownerData = null;
+    // Safely check if owner is a valid ObjectId before attempting to populate
+    if (
+      property.owner &&
+      mongoose.Types.ObjectId.isValid(property.owner)
+    ) {
+      const owner = await User.findById(property.owner).select("name email phone");
+      if (owner) {
+        ownerData = {
+          name: owner.name,
+          email: owner.email,
+          phone: owner.phone,
+        };
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      property: property,
+      owner: ownerData,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+        error: error.message,
+      });
+  }
 };
 
 //update property
