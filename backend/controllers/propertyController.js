@@ -224,14 +224,18 @@ exports.getAllProperties = async (req, res) => {
 // Get a single property by ID
 exports.getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id);
-    console.log(property);
+    // Find property and increment view count atomically
+    const property = await Property.findByIdAndUpdate(
+        req.params.id,
+        { $inc: { numberOfViews: 1 } },
+        { new: true }  // Return the updated document
+    );
+    
     if (!property) {
-      return res
+        return res
         .status(404)
         .json({ success: false, message: "Property not found" });
     }
-
     let ownerData = null;
     // Safely check if owner is a valid ObjectId before attempting to populate
     if (
