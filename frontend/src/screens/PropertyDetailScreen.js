@@ -17,7 +17,6 @@ import {
   createCarouselStyles,
 } from "../styles";
 import useProperty from "../hooks/useProperty";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function PropertyDetailScreen() {
   const route = useRoute();
@@ -54,6 +53,17 @@ export default function PropertyDetailScreen() {
     );
   }
 
+  const renderImages = () => {
+    return (<FlatList horizontal={true}
+      data={propertyData.images}
+      keyExtractor={(img) => img}
+      showsHorizontalScrollIndicator={false}
+      renderItem={({ item: imgUrl }) => (
+        <Image source={{ uri: imgUrl }} style={carouselStyles.carouselImage} />
+      )}
+    />);
+  }
+
   const renderHeader = () => (
     <>
       <View style={[layout.headerCentered, { paddingBottom: spacing.xl }]}>
@@ -85,7 +95,6 @@ export default function PropertyDetailScreen() {
         >
           📍 {propertyData.address}
         </Text>
-
         <Text
           style={[
             typography.textStyles.body,
@@ -221,36 +230,22 @@ export default function PropertyDetailScreen() {
     <View style={layout.container}>
       {propertyData.images && propertyData.images.length > 0 ? (
         <FlatList
-          data={[{ key: "header" }, { key: "carousel" }]}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item }) => {
-            if (item.key === "header") {
-              return renderHeader();
-            }
-            if (item.key === "carousel") {
-              return (
-                <FlatList
-                  data={propertyData.images}
-                  keyExtractor={(img) => img}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({ item: imgUrl }) => (
-                    <Image
-                      source={{ uri: imgUrl }}
-                      style={carouselStyles.carouselImage}
-                    />
-                  )}
-                  contentContainerStyle={carouselStyles.carouselContainer}
-                />
-              );
-            }
-            return null;
-          }}
+          data={[]}
+          keyExtractor={() => 'key'}
+          renderItem={() => null}
+          ListHeaderComponent={(
+            <>
+              {renderImages()}
+              {renderHeader()}
+            </>
+          )}
         />
       ) : (
-        <ScrollView style={layout.container}>{renderHeader()}</ScrollView>
+        <ScrollView style={layout.container}>
+          {renderHeader()}
+        </ScrollView>
       )}
     </View>
   );
+
 }

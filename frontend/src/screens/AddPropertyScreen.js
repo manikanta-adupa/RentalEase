@@ -34,8 +34,6 @@ export default function AddPropertyScreen() {
     const [amenityInput, setAmenityInput] = useState('');
     const [images, setImages] = useState([]);
 
-   
-
     const pickImage = async () => {
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -238,7 +236,7 @@ export default function AddPropertyScreen() {
         return;
     }
     // Handle form submission
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateForm()) {
             return;
         }
@@ -280,13 +278,28 @@ export default function AddPropertyScreen() {
 
         // Handle images array
         if (images.length > 0) {
-            images.forEach((uri, index) => {
-                formData.append('images', {
-                    uri: uri,
-                    name: `property-image-${index}.jpg`,
-                    type: 'image/jpeg',
-                });
-            });
+            for (let index = 0; index < images.length; index++) {
+                const uri = images[index];
+                
+                if (Platform.OS === 'web') {
+                    // On web, URIs are blob URLs - fetch them to get the actual Blob
+                    try {
+                        const response = await fetch(uri);
+                        const blob = await response.blob();
+                        formData.append('images', blob, `property-${Date.now()}-${index}.jpg`);
+                    } catch (error) {
+                        console.error('Error fetching blob:', error);
+                    }
+                } else {
+                    // On mobile, use the original approach
+                    const file = {
+                        uri: uri,
+                        name: `property-${Date.now()}-${index}.jpg`,
+                        type: 'image/jpeg'
+                    };
+                    formData.append('images', file);
+                }
+            }
         }
         
         createProperty(formData);
@@ -317,6 +330,7 @@ export default function AddPropertyScreen() {
                 setAvailableFrom('');
                 setAmenities([]);
                 setAmenityInput('');
+                // setImages([]);
             }, 3000);
         }
     }, [isSuccess]);

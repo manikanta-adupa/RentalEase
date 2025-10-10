@@ -10,14 +10,14 @@ export default function useCreateProperty() {
     return useMutation({
         mutationFn: async (property) => {
             // Set the content type for FormData
-            const config = {};
-            if (property instanceof FormData) {
-                config.headers = {
-                    'Content-Type': 'multipart/form-data',
-                };
-            }
+            // const config = {};
+            // if (property instanceof FormData) {
+            //     config.headers = {
+            //         'Content-Type': 'multipart/form-data',
+            //     };
+            // }
             
-            const response = await client.post('/properties', property, config);
+            const response = await client.post('/properties', property);
             return response.data;
         },
         onSuccess: (data) => {

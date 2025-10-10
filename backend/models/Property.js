@@ -226,4 +226,20 @@ propertySchema.methods.makeAvailable = function() {
     return this.save();
 };
 
+
+//CASCADE Delete: All applications for a property are deleted when the property is deleted, then the property is deleted
+propertySchema.pre('findOneAndDelete', async function(next) {
+    try {
+        const property = await this.model.findOne(this.getQuery());
+        if (property) {
+            const Application = mongoose.model('Application');
+            await Application.deleteMany({ property: property._id });
+            console.log(`Deleted all applications for property: ${property._id}`);
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = mongoose.model("Property", propertySchema);

@@ -58,12 +58,13 @@ exports.createProperty = async (req, res) => {
             amenities,
             owner: req.user._id,
         };
+        
         const newProperty = new Property(propertyData);
-
+        
         if (req.files && req.files.length > 0) {
             const imageUploadResult = await uploadPropertyImages(req.files, newProperty._id);
             if (imageUploadResult.success && imageUploadResult.data) {
-                newProperty.images = imageUploadResult.data.map(img => img.secure_url);
+                newProperty.images = imageUploadResult.data.map(img => img.url);
             } else {
                 console.error("Image upload failed:", imageUploadResult.message);
                 // Decide if you want to fail the whole property creation or not
@@ -224,7 +225,7 @@ exports.getAllProperties = async (req, res) => {
 exports.getPropertyById = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
-
+    console.log(property);
     if (!property) {
       return res
         .status(404)

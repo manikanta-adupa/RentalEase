@@ -16,6 +16,7 @@ const Application = require('../models/Application');
 
 const uploadPropertyImages = async (files, propertyId) => {
     try {
+        console.log("Service: About to upload images for property ID:", propertyId);
         const uploadedImages = [];
         if(!files || Array.isArray(files) === false){
             return {
@@ -51,12 +52,12 @@ const uploadPropertyImages = async (files, propertyId) => {
         }
 
         // Update Property model with new image URLs
-        const property = await Property.findById(propertyId);
-        if (property) {
-            const newImageUrls = uploadedImages.map(img => img.url);
-            property.images.push(...newImageUrls);
-            await property.save();
-        }
+        // const property = await Property.findById(propertyId);
+        // if (property) {
+        //     const newImageUrls = uploadedImages.map(img => img.url);
+        //     property.images.push(...newImageUrls);
+        //     await property.save();
+        // }
 
         return {
             success: true,

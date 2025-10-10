@@ -123,6 +123,12 @@ GIT_SETUP_COMMANDS.md
 *.postman_collection.json
 docs/
 
+# Development planning files (personal use only)
+*-plan.plan.md
+*.plan.md
+IMAGE_UPLOAD_FIX_SUMMARY.md
+DEBUGGING_*.md
+
 # Interview preparation and study materials (private)
 INTERVIEW_PREP.md
 study_notes/
