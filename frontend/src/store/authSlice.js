@@ -63,10 +63,9 @@ const authSlice = createSlice({
         },
         bootstrapDone: (state) =>{
             state.bootstrapped = true;
-        }
+        },
     }
 });
-
 export const { loginStart, loginSuccess, loginFailure, logout, bootstrapDone, registerStart, registerSuccess, registerFailure } = authSlice.actions;
 export default authSlice.reducer;
 

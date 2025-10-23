@@ -2,6 +2,7 @@ const Property = require("../models/Property");
 const { uploadPropertyImages } = require("../services/imageService");
 const mongoose = require("mongoose");
 const User = require("../models/User");
+const imageQueue = require("../queues/image-queue");
 
 //create property
 exports.createProperty = async (req, res) => {
@@ -60,19 +61,30 @@ exports.createProperty = async (req, res) => {
         };
         
         const newProperty = new Property(propertyData);
+        await newProperty.save();
         
+
         if (req.files && req.files.length > 0) {
-            const imageUploadResult = await uploadPropertyImages(req.files, newProperty._id);
-            if (imageUploadResult.success && imageUploadResult.data) {
-                newProperty.images = imageUploadResult.data.map(img => img.url);
-            } else {
-                console.error("Image upload failed:", imageUploadResult.message);
-                // Decide if you want to fail the whole property creation or not
-                // For now, we'll proceed without images but log the error
+            //fix buffer serializable error
+            const serializedFiles = req.files.map(file => ({
+                buffer: file.buffer.toString('base64'),
+                originalname: file.originalname,
+                mimetype: file.mimetype,
+                size: file.size,
+            }));
+            try {
+                await imageQueue.add('upload-images', {
+                    files: serializedFiles,
+                    propertyId: newProperty._id,
+                });
+            } catch (error) {
+                console.error('Error adding image upload job:', error);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to add image upload job',
+                });
             }
         }
-        
-        await newProperty.save();
 
         res.status(201).json({
             success: true,

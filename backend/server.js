@@ -182,15 +182,6 @@ const connectDB = async () => {
             }
         });
         
-        // CRITICAL: Handle uncaught exceptions to prevent crashes
-        process.on('uncaughtException', (err) => {
-            console.error('Uncaught Exception:', err);
-            // Don't exit immediately, let current requests finish
-            server.close(() => {
-                process.exit(1);
-            });
-        });
-        
     } catch (error) {
         console.error('Error connecting to MongoDB:', error.message);
         process.exit(1);
@@ -242,19 +233,33 @@ app.use('/api/*', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Accessible at: http://localhost:${PORT} and http://192.168.31.208:${PORT}`);
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-    console.error('Unhandled Promise Rejection:', err.message);
-    server.close(() => {
-        process.exit(1);
+if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
+    const server = app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`Accessible at: http://localhost:${PORT} and http://192.168.31.208:${PORT}`);
     });
-});
+    
+    // CRITICAL: Handle uncaught exceptions to prevent crashes
+    // This needs to be in the same scope as the `server` variable
+    process.on('uncaughtException', (err) => {
+        console.error('Uncaught Exception:', err);
+        // Don't exit immediately, let current requests finish
+        server.close(() => {
+            process.exit(1);
+        });
+    });
+    
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err, promise) => {
+        console.error('Unhandled Promise Rejection:', err.message);
+        server.close(() => {
+            process.exit(1);
+        });
+    });
+}
+
+app.connectDB =  connectDB;
 
 module.exports = app;

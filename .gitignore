@@ -136,6 +136,8 @@ interview_questions.md
 *.interview
 *.study
 
+dump.rdb 
+/backend/timepass
 # Keep important config files
 !.gitkeep
 !package.json

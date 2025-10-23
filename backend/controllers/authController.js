@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const emailService = require("../services/emailService");
+const emailQueue = require("../queues/email-queue");    
 // const logger = require("../utils/logger");
 //register a new user
 exports.register = async (req, res) => {
@@ -24,14 +25,11 @@ exports.register = async (req, res) => {
         newUser.refreshTokenExpires = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
         await newUser.save();
         ///send welcome email
-        try{
-            await Promise.all([
-                emailService.sendWelcomeEmail(email, name),
-            ]);
-        }
-        catch(error){
-            console.error('Error sending welcome email:', error);
-        }
+        await emailQueue.add('send-email', {
+            type: 'welcome',
+            to: email,
+            data: { name: name },
+        });
         ///send response
         res.status(201).json({
             success: true,
@@ -122,7 +120,14 @@ exports.forgotPassword = async (req, res) => {
 
         // Send reset email
         try {
-            await emailService.sendPasswordResetEmail(email, user.name, resetToken);
+            await emailQueue.add('send-email', {
+                type: 'password-reset',
+                to: email,
+                data: {
+                    name: user.name,
+                    resetToken: resetToken,
+                },
+            });
         } catch (emailError) {
             console.error('Error sending password reset email:', emailError);
             // Clear the reset token if email fails
@@ -212,6 +217,12 @@ exports.logout = async (req, res) => {
     const { refreshToken } = req.body;
     try{
         const user = await User.findOne({ refreshToken });
+        if(!user){
+            return res.status(401).json({
+                success: true,
+                message: "Logged out successfully"
+            });
+        }
         user.refreshToken = null;
         user.refreshTokenExpires = null;
         await user.save();

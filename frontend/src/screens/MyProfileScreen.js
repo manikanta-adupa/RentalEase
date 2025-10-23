@@ -1,13 +1,24 @@
 import React from 'react';
-import { View, Text, StatusBar, ScrollView } from 'react-native';
+import { View, Text, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../store/authSlice';
 import { colors, typography, spacing, layout } from '../styles';
 import Footer from '../components/Footer';
+import useLogout from '../hooks/useLogout';
 
 export default function MyProfileScreen() {
-    const { user } = useSelector(selectAuth);
+    const { user, refreshToken } = useSelector(selectAuth);
+    const { mutate: logout } = useLogout();
+
+    const handleLogout = async () => {
+        if(refreshToken){
+            logout({refreshToken});
+        }
+        else{
+            Alert.alert('Logout Failed', 'Could not log out from the server. Please check your connection and try again.');
+        }
+    }
     return (
         <SafeAreaView style={layout.safeArea}>
             <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
@@ -40,6 +51,11 @@ export default function MyProfileScreen() {
                                 Profile of {user?.name || 'User'}
                             </Text>
                         </View>
+
+                        {/* Logout Button */}
+                        <TouchableOpacity style={layout.button} onPress={handleLogout}>
+                            <Text style={typography.textStyles.button}>Logout</Text>
+                        </TouchableOpacity>
 
                         {/* Features Coming Soon */}
                         <View style={{ alignItems: 'center' }}>
