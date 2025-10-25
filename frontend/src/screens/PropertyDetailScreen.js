@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -26,8 +28,11 @@ export default function PropertyDetailScreen() {
   const propertyData = data?.property;
   const ownerData = data?.owner;
 
-  const { width } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("window");
   const carouselStyles = createCarouselStyles(width);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   if (isLoading) {
     return (
@@ -53,64 +58,236 @@ export default function PropertyDetailScreen() {
     );
   }
 
-  const renderImages = () => {
-    return (<FlatList horizontal={true}
-      data={propertyData.images}
-      keyExtractor={(img) => img}
-      showsHorizontalScrollIndicator={false}
-      renderItem={({ item: imgUrl }) => (
-        <Image source={{ uri: imgUrl }} style={carouselStyles.carouselImage} />
-      )}
-    />);
-  }
-
   const renderHeader = () => (
+    <View style={[layout.headerCentered, { paddingBottom: spacing.xl }]}>
+      <Text
+        style={[
+          typography.textStyles.h1,
+          {
+            color: colors.text.inverse,
+            textAlign: "center",
+            marginBottom: spacing.lg,
+            paddingHorizontal: spacing.md,
+          },
+        ]}
+      >
+        {propertyData.title}
+      </Text>
+
+      <Text
+        style={[
+          typography.textStyles.bodyLarge,
+          {
+            color: colors.primary.light,
+            textAlign: "center",
+            opacity: 0.95,
+            fontWeight: typography.fontWeight.medium,
+            marginBottom: spacing.xs,
+          },
+        ]}
+      >
+        📍 {propertyData.address}
+      </Text>
+      <Text
+        style={[
+          typography.textStyles.body,
+          {
+            color: colors.primary.light,
+            textAlign: "center",
+            marginTop: spacing.xs,
+            opacity: 0.8,
+            fontWeight: typography.fontWeight.medium,
+          },
+        ]}
+      >
+        {propertyData.city}, {propertyData.state}
+      </Text>
+    </View>
+  );
+
+  const handleImagePress = (index) => {
+    setSelectedImageIndex(index);
+    setModalVisible(true);
+  };
+
+  const handlePreviousImage = () => {
+    setSelectedImageIndex((prev) => 
+      prev === 0 ? propertyData.images.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prev) => 
+      prev === propertyData.images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const renderImages = () => {
+    if (!propertyData.images || propertyData.images.length === 0) return null;
+    
+    return (
+      <TouchableOpacity 
+        activeOpacity={0.9}
+        onPress={() => handleImagePress(0)}
+        style={{
+          width: '100%',
+          height: 300,
+          position: 'relative',
+          marginBottom: spacing.md,
+        }}
+      >
+        {/* Featured Image */}
+        <Image 
+          source={{ uri: propertyData.images[0] }} 
+          style={{
+            width: '100%',
+            height: '100%',
+            resizeMode: 'cover',
+          }}
+        />
+        
+        {/* Overlay Button */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 15,
+            right: 15,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            paddingHorizontal: 16,
+            paddingVertical: 10,
+            borderRadius: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 18 }}>📷</Text>
+          <Text style={{ 
+            color: 'white', 
+            fontSize: 15, 
+            fontWeight: '600',
+          }}>
+            View All Photos ({propertyData.images.length})
+          </Text>
+        </View>
+
+        {/* Optional: Gradient overlay for better button visibility */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 100,
+            backgroundColor: 'transparent',
+            background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.3))',
+          }}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderImageModal = () => {
+    if (!propertyData.images || propertyData.images.length === 0) return null;
+
+    return (
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          {/* Close Button */}
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={{
+              position: 'absolute',
+              top: 50,
+              right: 20,
+              zIndex: 10,
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: 20,
+              padding: 10,
+            }}
+          >
+            <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>✕</Text>
+          </TouchableOpacity>
+
+          {/* Image Counter */}
+          <View style={{
+            position: 'absolute',
+            top: 50,
+            left: 20,
+            zIndex: 10,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            borderRadius: 20,
+            paddingHorizontal: 15,
+            paddingVertical: 8,
+          }}>
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
+              {selectedImageIndex + 1} / {propertyData.images.length}
+            </Text>
+          </View>
+
+          {/* Main Image */}
+          <Image
+            source={{ uri: propertyData.images[selectedImageIndex] }}
+            style={{
+              width: width,
+              height: height * 0.7,
+              resizeMode: 'contain',
+            }}
+          />
+
+          {/* Navigation Buttons */}
+          {propertyData.images.length > 1 && (
+            <>
+              {/* Previous Button */}
+              <TouchableOpacity
+                onPress={handlePreviousImage}
+                style={{
+                  position: 'absolute',
+                  left: 20,
+                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                  borderRadius: 30,
+                  padding: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>‹</Text>
+              </TouchableOpacity>
+
+              {/* Next Button */}
+              <TouchableOpacity
+                onPress={handleNextImage}
+                style={{
+                  position: 'absolute',
+                  right: 20,
+                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                  borderRadius: 30,
+                  padding: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>›</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </Modal>
+    );
+  };
+
+  const renderDetails = () => (
     <>
-      <View style={[layout.headerCentered, { paddingBottom: spacing.xl }]}>
-        <Text
-          style={[
-            typography.textStyles.h1,
-            {
-              color: colors.text.inverse,
-              textAlign: "center",
-              marginBottom: spacing.lg,
-              paddingHorizontal: spacing.md,
-            },
-          ]}
-        >
-          {propertyData.title}
-        </Text>
-
-        <Text
-          style={[
-            typography.textStyles.bodyLarge,
-            {
-              color: colors.primary.light,
-              textAlign: "center",
-              opacity: 0.95,
-              fontWeight: typography.fontWeight.medium,
-              marginBottom: spacing.xs,
-            },
-          ]}
-        >
-          📍 {propertyData.address}
-        </Text>
-        <Text
-          style={[
-            typography.textStyles.body,
-            {
-              color: colors.primary.light,
-              textAlign: "center",
-              marginTop: spacing.xs,
-              opacity: 0.8,
-              fontWeight: typography.fontWeight.medium,
-            },
-          ]}
-        >
-          {propertyData.city}, {propertyData.state}
-        </Text>
-      </View>
-
       {/* Property Details Section */}
       <View style={layout.cardLarge}>
         <Text style={layout.sectionTitle}>Property Details</Text>
@@ -227,25 +404,13 @@ export default function PropertyDetailScreen() {
   );
 
   return (
-    <View style={layout.container}>
-      {propertyData.images && propertyData.images.length > 0 ? (
-        <FlatList
-          data={[]}
-          keyExtractor={() => 'key'}
-          renderItem={() => null}
-          ListHeaderComponent={(
-            <>
-              {renderImages()}
-              {renderHeader()}
-            </>
-          )}
-        />
-      ) : (
-        <ScrollView style={layout.container}>
-          {renderHeader()}
-        </ScrollView>
-      )}
+    <View style={{ flex: 1 }}>
+      <ScrollView style={layout.container}>
+        {renderHeader()}
+        {renderImages()}
+        {renderDetails()}
+      </ScrollView>
+      {renderImageModal()}
     </View>
   );
-
 }
