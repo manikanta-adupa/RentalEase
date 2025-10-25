@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const {deleteAllPropertyFiles} = require("../services/imageService");
 // const Application = require("./Application");
 
 const userSchema = new mongoose.Schema({
@@ -108,7 +109,7 @@ userSchema.methods.comparePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
 
-//generate password reset token
+//generate password reset tokens
 userSchema.methods.generatePasswordResetToken = function() {
     const resetToken = crypto.randomBytes(32).toString("hex");
     this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
@@ -131,6 +132,10 @@ userSchema.pre('findOneAndDelete', async function(next) {
         const user = await this.model.findOne(this.getQuery());
         if (user) {
             const Property = mongoose.model('Property');
+            const properties = await Property.find({ owner: user._id });
+            for (const property of properties) {
+                await deleteAllPropertyFiles(property._id);
+            }
             await Property.deleteMany({ owner: user._id });
             const Application = mongoose.model('Application');
             await Application.deleteMany({ tenant: user._id });

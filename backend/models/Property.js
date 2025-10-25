@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const {deleteAllPropertyFiles} = require("../services/imageService");
 const propertySchema = new mongoose.Schema({
     //basic 
     title: {
@@ -232,6 +232,7 @@ propertySchema.pre('findOneAndDelete', async function(next) {
     try {
         const property = await this.model.findOne(this.getQuery());
         if (property) {
+            await deleteAllPropertyFiles(property._id);
             const Application = mongoose.model('Application');
             await Application.deleteMany({ property: property._id });
             console.log(`Deleted all applications for property: ${property._id}`);
