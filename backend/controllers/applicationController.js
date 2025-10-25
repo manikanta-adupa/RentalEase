@@ -2,6 +2,7 @@ const Application = require('../models/Application');
 const Property = require('../models/Property');
 const User = require('../models/User');
 const emailService = require('../services/emailService');
+const emailQueue = require('../queues/email-queue');
 
 // @desc    Create new application (Tenant applies for property)
 // @route   POST /api/applications
@@ -102,15 +103,23 @@ const createApplication = async (req, res) => {
 
     // Send owner notification email
     try {
-      await Promise.all([
-        emailService.sendNewApplicationEmail(
-          application.owner.email,
-          application.owner.name,
-          application.tenant,
-          application.property,
-          application.message
-        ),
-      ]);
+        // emailService.sendNewApplicationEmail(
+        //   application.owner.email,
+        //   application.owner.name,
+        //   application.tenant,
+        //   application.property,
+        //   application.message
+        // ),
+        await emailQueue.add('send-email', {
+          type: 'new-application',
+          to: application.owner.email,
+          data: {
+            ownerName: application.owner.name,
+            tenant: application.tenant,
+            property: application.property,
+            message: application.message
+          }
+        })
     } catch (error) {
       console.error('Error sending owner notification email:', error);
     }
@@ -306,9 +315,19 @@ const updateApplicationStatus = async (req, res) => {
     const propertyTitle = application.property.title;
 
     try {
-      await Promise.all([
-        emailService.sendApplicationStatusEmailEnhanced(tenantEmail, tenantName, status, {property: propertyTitle, ownerMessage: ownerResponse}),
-      ]);
+      // await Promise.all([
+      //   emailService.sendApplicationStatusEmailEnhanced(tenantEmail, tenantName, status, {property: propertyTitle, ownerMessage: ownerResponse}),
+      // ]);
+      await emailQueue.add('send-email', {
+        type: 'application-status',
+        to: tenantEmail,
+        data: {
+          tenantName: tenantName,
+          status: status,
+          property: propertyTitle,
+          ownerMessage: ownerResponse
+        }
+      })
     } catch (error) {
       console.error('Error sending email notifications:', error);
     }

@@ -12,6 +12,12 @@ emailQueue.process('send-email', async (job) =>{
             case 'password-reset':
                 await emailService.sendPasswordResetEmail(to, data.name, data.resetToken);  
                 break;
+            case 'new-application':
+                await emailService.sendNewApplicationEmail(to, data.ownerName, data.tenant, data.property, data.message);
+                break;
+            case 'application-status':
+                await emailService.sendApplicationStatusEmailEnhanced(to, data.tenantName, data.status, {property: data.property, ownerMessage: data.ownerMessage});
+                break;
             default:
                 throw new Error('Invalid email type');
         }
